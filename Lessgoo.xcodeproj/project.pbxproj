@@ -45,6 +45,16 @@
 		8E6C88E62A86A1CE00149737 /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8E6C88E52A86A1CE00149737 /* FirebaseRemoteConfigSwift */; };
 		8E6C88E82A86A1CE00149737 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8E6C88E72A86A1CE00149737 /* FirebaseStorage */; };
 		8E6C88EA2A86A1CE00149737 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8E6C88E92A86A1CE00149737 /* FirebaseStorageCombine-Community */; };
+		8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88EB2A86A5DA00149737 /* MainViewViewModel.swift */; };
+		8E6C88EE2A86A5EA00149737 /* LoginViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88ED2A86A5E900149737 /* LoginViewViewModel.swift */; };
+		8E6C88F02A86A60000149737 /* RegisterViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88EF2A86A60000149737 /* RegisterViewViewModel.swift */; };
+		8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88F12A86A61100149737 /* HomeViewViewModel.swift */; };
+		8E6C88F42A86A62100149737 /* DestinationViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88F32A86A62100149737 /* DestinationViewViewModel.swift */; };
+		8E6C88F62A86A63300149737 /* TripPlanningViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88F52A86A63300149737 /* TripPlanningViewViewModel.swift */; };
+		8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88F72A86A64200149737 /* ProfileViewViewModel.swift */; };
+		8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88F92A86A65200149737 /* SettingsViewViewModel.swift */; };
+		8E6C88FC2A86A66400149737 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */; };
+		8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88FD2A86A67800149737 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +70,16 @@
 		8E6C88AE2A86A14300149737 /* TripPlanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPlanningView.swift; sourceTree = "<group>"; };
 		8E6C88B02A86A16100149737 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		8E6C88B22A86A17100149737 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		8E6C88EB2A86A5DA00149737 /* MainViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88ED2A86A5E900149737 /* LoginViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88EF2A86A60000149737 /* RegisterViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88F12A86A61100149737 /* HomeViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88F32A86A62100149737 /* DestinationViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88F52A86A63300149737 /* TripPlanningViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPlanningViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88F72A86A64200149737 /* ProfileViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88F92A86A65200149737 /* SettingsViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewViewModel.swift; sourceTree = "<group>"; };
+		8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		8E6C88FD2A86A67800149737 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +182,14 @@
 		8E6C88A22A869EE800149737 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				8E6C88EB2A86A5DA00149737 /* MainViewViewModel.swift */,
+				8E6C88ED2A86A5E900149737 /* LoginViewViewModel.swift */,
+				8E6C88EF2A86A60000149737 /* RegisterViewViewModel.swift */,
+				8E6C88F12A86A61100149737 /* HomeViewViewModel.swift */,
+				8E6C88F32A86A62100149737 /* DestinationViewViewModel.swift */,
+				8E6C88F52A86A63300149737 /* TripPlanningViewViewModel.swift */,
+				8E6C88F72A86A64200149737 /* ProfileViewViewModel.swift */,
+				8E6C88F92A86A65200149737 /* SettingsViewViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -170,6 +198,8 @@
 			isa = PBXGroup;
 			children = (
 				8E6C88962A869B9800149737 /* Assets.xcassets */,
+				8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */,
+				8E6C88FD2A86A67800149737 /* Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -264,6 +294,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E6C88FC2A86A66400149737 /* Launch Screen.storyboard in Resources */,
 				8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */,
 				8E6C88972A869B9800149737 /* Assets.xcassets in Resources */,
 			);
@@ -276,7 +307,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E6C88F42A86A62100149737 /* DestinationViewViewModel.swift in Sources */,
+				8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */,
+				8E6C88EE2A86A5EA00149737 /* LoginViewViewModel.swift in Sources */,
+				8E6C88F62A86A63300149737 /* TripPlanningViewViewModel.swift in Sources */,
 				8E6C88B12A86A16100149737 /* ProfileView.swift in Sources */,
+				8E6C88F02A86A60000149737 /* RegisterViewViewModel.swift in Sources */,
 				8E6C88AD2A86A13300149737 /* DestinationDetailView.swift in Sources */,
 				8E6C88AF2A86A14300149737 /* TripPlanningView.swift in Sources */,
 				8E6C88B32A86A17100149737 /* SettingsView.swift in Sources */,
@@ -284,6 +320,10 @@
 				8E6C88A92A86A10800149737 /* RegisterView.swift in Sources */,
 				8E6C88A52A86A0CE00149737 /* MainView.swift in Sources */,
 				8E6C88AB2A86A11800149737 /* HomeView.swift in Sources */,
+				8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */,
+				8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */,
+				8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */,
+				8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */,
 				8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -51,9 +51,12 @@
 		8E6C88912A869B9200149737 /* Lessgoo */ = {
 			isa = PBXGroup;
 			children = (
+				8E6C88A32A869EF800149737 /* Utils */,
+				8E6C88A22A869EE800149737 /* ViewModels */,
+				8E6C88A12A869EE000149737 /* Views */,
+				8E6C88A02A869ECA00149737 /* Models */,
 				8E6C88922A869B9200149737 /* LessgooApp.swift */,
 				8E6C88942A869B9200149737 /* ContentView.swift */,
-				8E6C88962A869B9800149737 /* Assets.xcassets */,
 				8E6C88982A869B9800149737 /* Preview Content */,
 			);
 			path = Lessgoo;
@@ -65,6 +68,35 @@
 				8E6C88992A869B9800149737 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		8E6C88A02A869ECA00149737 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8E6C88A12A869EE000149737 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8E6C88A22A869EE800149737 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8E6C88A32A869EF800149737 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8E6C88962A869B9800149737 /* Assets.xcassets */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F162DB82A887C61004DC668 /* TitledTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DB72A887C61004DC668 /* TitledTextField.swift */; };
+		6F162DBA2A887E55004DC668 /* ValidationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DB92A887E55004DC668 /* ValidationManager.swift */; };
+		6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DBC2A888198004DC668 /* CreateTripView.swift */; };
 		8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88922A869B9200149737 /* LessgooApp.swift */; };
 		8E6C88972A869B9800149737 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88962A869B9800149737 /* Assets.xcassets */; };
 		8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88992A869B9800149737 /* Preview Assets.xcassets */; };
@@ -58,6 +61,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F162DB72A887C61004DC668 /* TitledTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledTextField.swift; sourceTree = "<group>"; };
+		6F162DB92A887E55004DC668 /* ValidationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationManager.swift; sourceTree = "<group>"; };
+		6F162DBC2A888198004DC668 /* CreateTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTripView.swift; sourceTree = "<group>"; };
 		8E6C888F2A869B9200149737 /* Lessgoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lessgoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6C88922A869B9200149737 /* LessgooApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessgooApp.swift; sourceTree = "<group>"; };
 		8E6C88962A869B9800149737 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -120,6 +126,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F162DBB2A888155004DC668 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				6F162DB72A887C61004DC668 /* TitledTextField.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		8E6C88862A869B9200149737 = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +153,7 @@
 		8E6C88912A869B9200149737 /* Lessgoo */ = {
 			isa = PBXGroup;
 			children = (
+				6F162DBB2A888155004DC668 /* Components */,
 				8E6C88A32A869EF800149737 /* Utils */,
 				8E6C88A22A869EE800149737 /* ViewModels */,
 				8E6C88A12A869EE000149737 /* Views */,
@@ -175,6 +190,7 @@
 				8E6C88AE2A86A14300149737 /* TripPlanningView.swift */,
 				8E6C88B02A86A16100149737 /* ProfileView.swift */,
 				8E6C88B22A86A17100149737 /* SettingsView.swift */,
+				6F162DBC2A888198004DC668 /* CreateTripView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -200,6 +216,7 @@
 				8E6C88962A869B9800149737 /* Assets.xcassets */,
 				8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */,
 				8E6C88FD2A86A67800149737 /* Extensions.swift */,
+				6F162DB92A887E55004DC668 /* ValidationManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -307,6 +324,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F162DBA2A887E55004DC668 /* ValidationManager.swift in Sources */,
 				8E6C88F42A86A62100149737 /* DestinationViewViewModel.swift in Sources */,
 				8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */,
 				8E6C88EE2A86A5EA00149737 /* LoginViewViewModel.swift in Sources */,
@@ -316,6 +334,7 @@
 				8E6C88AD2A86A13300149737 /* DestinationDetailView.swift in Sources */,
 				8E6C88AF2A86A14300149737 /* TripPlanningView.swift in Sources */,
 				8E6C88B32A86A17100149737 /* SettingsView.swift in Sources */,
+				6F162DB82A887C61004DC668 /* TitledTextField.swift in Sources */,
 				8E6C88A72A86A0F200149737 /* LoginView.swift in Sources */,
 				8E6C88A92A86A10800149737 /* RegisterView.swift in Sources */,
 				8E6C88A52A86A0CE00149737 /* MainView.swift in Sources */,
@@ -323,6 +342,7 @@
 				8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */,
 				8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */,
 				8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */,
+				6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */,
 				8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */,
 				8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */,
 			);
@@ -455,10 +475,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Lessgoo/Preview Content\"";
-				DEVELOPMENT_TEAM = TVFW2DKZ2U;
+				DEVELOPMENT_TEAM = 6AAK988V97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -466,13 +487,15 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = crypticminds.Lessgoo;
+				PRODUCT_BUNDLE_IDENTIFIER = conm.jay.lessgo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -484,10 +507,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Lessgoo/Preview Content\"";
-				DEVELOPMENT_TEAM = TVFW2DKZ2U;
+				DEVELOPMENT_TEAM = 6AAK988V97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -495,13 +519,15 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = crypticminds.Lessgoo;
+				PRODUCT_BUNDLE_IDENTIFIER = conm.jay.lessgo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

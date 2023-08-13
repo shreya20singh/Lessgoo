@@ -9,10 +9,24 @@ import SwiftUI
 
 struct TripPlanningView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView {
+            VStack {
+                Text("Plan")
+                NavigationLink(destination: Text("First Tab Detail View")) {
+                    Text("Go to Detail")
+                }
+            }
+            .navigationBarTitle("Plan", displayMode: .large)
+        }
     }
 }
 
-#Preview {
-    TripPlanningView()
+//#Preview {
+//    TripPlanningView()
+//}
+
+struct TripPlanningView_Preview: PreviewProvider {
+    static var previews: some View {
+        TripPlanningView()
+    }
 }

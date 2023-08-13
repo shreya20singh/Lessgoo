@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct MainView: View {
+    @State var sampleText = "Sample pre-filled text"
+    @StateObject var sampleVM = ValidationManager()
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+//        TitledTextField(title: "Trip name", text: $sampleText, validationManager: sampleVM)
+        CreateTripView()
     }
 }
 
-#Preview {
-    MainView()
-}
+//#Preview {
+//    MainView()
+//}

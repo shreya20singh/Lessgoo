@@ -13,6 +13,6 @@ struct DestinationDetailView: View {
     }
 }
 
-#Preview {
-    DestinationDetailView()
-}
+//#Preview {
+//    DestinationDetailView()
+//}

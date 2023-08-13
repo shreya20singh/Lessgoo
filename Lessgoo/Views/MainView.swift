@@ -13,7 +13,8 @@ struct MainView: View {
 
     var body: some View {
 //        TitledTextField(title: "Trip name", text: $sampleText, validationManager: sampleVM)
-        CreateTripView()
+//        TripPlanningView()
+        TripPlanningView()
     }
 }
 

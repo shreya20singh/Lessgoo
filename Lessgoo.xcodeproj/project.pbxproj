@@ -11,7 +11,8 @@
 		6F162DBA2A887E55004DC668 /* ValidationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DB92A887E55004DC668 /* ValidationManager.swift */; };
 		6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DBC2A888198004DC668 /* CreateTripView.swift */; };
 		6F162DBF2A888DA1004DC668 /* TripListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DBE2A888DA1004DC668 /* TripListCellView.swift */; };
-		6F162DC12A88912F004DC668 /* TripEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC02A88912F004DC668 /* TripEditView.swift */; };
+		6F162DC12A88912F004DC668 /* TripPresentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC02A88912F004DC668 /* TripPresentView.swift */; };
+		6F162DC32A8895E7004DC668 /* TripEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC22A8895E7004DC668 /* TripEditView.swift */; };
 		8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88922A869B9200149737 /* LessgooApp.swift */; };
 		8E6C88972A869B9800149737 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88962A869B9800149737 /* Assets.xcassets */; };
 		8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88992A869B9800149737 /* Preview Assets.xcassets */; };
@@ -67,7 +68,8 @@
 		6F162DB92A887E55004DC668 /* ValidationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationManager.swift; sourceTree = "<group>"; };
 		6F162DBC2A888198004DC668 /* CreateTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTripView.swift; sourceTree = "<group>"; };
 		6F162DBE2A888DA1004DC668 /* TripListCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripListCellView.swift; sourceTree = "<group>"; };
-		6F162DC02A88912F004DC668 /* TripEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripEditView.swift; sourceTree = "<group>"; };
+		6F162DC02A88912F004DC668 /* TripPresentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPresentView.swift; sourceTree = "<group>"; };
+		6F162DC22A8895E7004DC668 /* TripEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripEditView.swift; sourceTree = "<group>"; };
 		8E6C888F2A869B9200149737 /* Lessgoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lessgoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6C88922A869B9200149737 /* LessgooApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessgooApp.swift; sourceTree = "<group>"; };
 		8E6C88962A869B9800149737 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -196,7 +198,8 @@
 				8E6C88B22A86A17100149737 /* SettingsView.swift */,
 				6F162DBC2A888198004DC668 /* CreateTripView.swift */,
 				6F162DBE2A888DA1004DC668 /* TripListCellView.swift */,
-				6F162DC02A88912F004DC668 /* TripEditView.swift */,
+				6F162DC02A88912F004DC668 /* TripPresentView.swift */,
+				6F162DC22A8895E7004DC668 /* TripEditView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -343,11 +346,12 @@
 				6F162DB82A887C61004DC668 /* TitledTextField.swift in Sources */,
 				8E6C88A72A86A0F200149737 /* LoginView.swift in Sources */,
 				8E6C88A92A86A10800149737 /* RegisterView.swift in Sources */,
+				6F162DC32A8895E7004DC668 /* TripEditView.swift in Sources */,
 				8E6C88A52A86A0CE00149737 /* MainView.swift in Sources */,
 				8E6C88AB2A86A11800149737 /* HomeView.swift in Sources */,
 				8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */,
 				8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */,
-				6F162DC12A88912F004DC668 /* TripEditView.swift in Sources */,
+				6F162DC12A88912F004DC668 /* TripPresentView.swift in Sources */,
 				6F162DBF2A888DA1004DC668 /* TripListCellView.swift in Sources */,
 				8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */,
 				6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */,

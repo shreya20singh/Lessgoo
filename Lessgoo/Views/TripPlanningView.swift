@@ -35,7 +35,7 @@ struct TripPlanningView: View {
                 // When list is empty, list will hide itself
                 // TODO: Add a placeholder view when list is empty
                 List(trips, id: \.0) { tripName, tripImage in
-                   NavigationLink(destination: TripEditView()) {
+                   NavigationLink(destination: TripPresentView()) {
                        TripListCellView(tripName: tripName, tripImage: tripImage)
                    }
                 }

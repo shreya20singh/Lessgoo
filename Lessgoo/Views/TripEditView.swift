@@ -8,36 +8,20 @@
 import SwiftUI
 
 struct TripEditView: View {
-    var tripName: String = "Default Trip"
-    var tripNameSub: String = "By Jialiang Xiao 0 Items"
-    var tripImage: Image = Image(systemName: "photo") // Using system icon as placeholder
-    
+    @State var sampleText = "Sample pre-filled text"
+    @StateObject var sampleVM = ValidationManager()
     var body: some View {
-        ScrollView{
-            VStack(alignment: .leading, spacing: 5) {
-                tripImage
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: UIScreen.main.bounds.width, height: 120)
-                    .clipped()
-                
-                Spacer()
-                
-                Text(tripName)
-                    .font(.title)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
-                Text(tripNameSub)
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
+        NavigationView {
+            ScrollView {
+                VStack {
+                    TitledTextField(title: "Trip Name", text: $sampleText, validationManager: sampleVM)
+                    Spacer()
+                    TitledTextField(title: "Trip Name", text: $sampleText, validationManager: sampleVM)
+                    
+                }
             }
-            .padding(10)
         }
+        .navigationTitle("Edit")
     }
 }
 

@@ -15,7 +15,9 @@ struct MainView: View {
 //        TitledTextField(title: "Trip name", text: $sampleText, validationManager: sampleVM)
 //        TripPlanningView()
 //        TripPlanningView()
-        DestinationSearchView()
+//        DestinationSearchView()
+//        ProfilePresentView()
+        ProfileView()
     }
 }
 

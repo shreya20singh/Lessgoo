@@ -55,6 +55,9 @@
 		8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88F92A86A65200149737 /* SettingsViewViewModel.swift */; };
 		8E6C88FC2A86A66400149737 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */; };
 		8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88FD2A86A67800149737 /* Extensions.swift */; };
+		E3F50DA52A89AEBE009EFFF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3F50DA42A89AEBD009EFFF8 /* GoogleService-Info.plist */; };
+		E3F50DA72A8A90A7009EFFF8 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F50DA62A8A90A7009EFFF8 /* UserModel.swift */; };
+		E3F50DA92A8A91F0009EFFF8 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +83,9 @@
 		8E6C88F92A86A65200149737 /* SettingsViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewViewModel.swift; sourceTree = "<group>"; };
 		8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		8E6C88FD2A86A67800149737 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		E3F50DA42A89AEBD009EFFF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E3F50DA62A8A90A7009EFFF8 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = SOURCE_ROOT; };
+		E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +166,7 @@
 		8E6C88A02A869ECA00149737 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E3F50DA62A8A90A7009EFFF8 /* UserModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -199,7 +206,9 @@
 			children = (
 				8E6C88962A869B9800149737 /* Assets.xcassets */,
 				8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */,
+				E3F50DA42A89AEBD009EFFF8 /* GoogleService-Info.plist */,
 				8E6C88FD2A86A67800149737 /* Extensions.swift */,
+				E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -295,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E6C88FC2A86A66400149737 /* Launch Screen.storyboard in Resources */,
+				E3F50DA52A89AEBE009EFFF8 /* GoogleService-Info.plist in Resources */,
 				8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */,
 				8E6C88972A869B9800149737 /* Assets.xcassets in Resources */,
 			);
@@ -308,6 +318,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E6C88F42A86A62100149737 /* DestinationViewViewModel.swift in Sources */,
+				E3F50DA92A8A91F0009EFFF8 /* DataManager.swift in Sources */,
 				8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */,
 				8E6C88EE2A86A5EA00149737 /* LoginViewViewModel.swift in Sources */,
 				8E6C88F62A86A63300149737 /* TripPlanningViewViewModel.swift in Sources */,
@@ -322,6 +333,7 @@
 				8E6C88AB2A86A11800149737 /* HomeView.swift in Sources */,
 				8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */,
 				8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */,
+				E3F50DA72A8A90A7009EFFF8 /* UserModel.swift in Sources */,
 				8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */,
 				8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */,
 				8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */,
@@ -467,7 +479,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -499,7 +511,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+
+
+class LoginSettings: ObservableObject {
+    @Published var loggedIn = false
+}

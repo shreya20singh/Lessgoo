@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>95616458400-417l9h0se26ff60m67j8e46hcug6ms3t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.95616458400-417l9h0se26ff60m67j8e46hcug6ms3t</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCVvMkd8Is5jho-8QRaTeLjXqIa0YeImGc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>95616458400</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>crypticminds.Lessgoo</string>
+	<key>PROJECT_ID</key>
+	<string>final-project-trip</string>
+	<key>STORAGE_BUCKET</key>
+	<string>final-project-trip.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:95616458400:ios:6c6fa35032412f88dcb3c5</string>
+</dict>
+</plist>

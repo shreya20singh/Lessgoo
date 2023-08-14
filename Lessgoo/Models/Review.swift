@@ -7,14 +7,10 @@
 
 import Foundation
 
-struct Review: Codable, Equatable{
+struct Review: Codable{
     let destination: Destination
     let rating: String
     let title: String
     let reviewDescription: String
     let timestamp: TimeInterval
-    
-    static func == (lhs: Review, rhs: Review) -> Bool {
-        <#code#>
-    }
 }

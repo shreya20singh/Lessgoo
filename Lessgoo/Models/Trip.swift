@@ -7,16 +7,12 @@
 
 import Foundation
 
-struct Trip: Codable, Equatable{
+struct Trip: Codable{
   
     let destinationList: [Destination]
     let duration: String
     let title: String
     let description: String
     let isPublic: Bool
-    
-    static func == (lhs: Trip, rhs: Trip) -> Bool {
-        <#code#>
-    }
     
 }

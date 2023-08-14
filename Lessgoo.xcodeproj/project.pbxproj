@@ -70,6 +70,11 @@
 		E3F50DA52A89AEBE009EFFF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3F50DA42A89AEBD009EFFF8 /* GoogleService-Info.plist */; };
 		E3F50DA72A8A90A7009EFFF8 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F50DA62A8A90A7009EFFF8 /* UserModel.swift */; };
 		E3F50DA92A8A91F0009EFFF8 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */; };
+		8E6C89002A86A79800149737 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88FF2A86A79800149737 /* User.swift */; };
+		8EAD12592A8A6EAD00BA8797 /* Destination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAD12582A8A6EAD00BA8797 /* Destination.swift */; };
+		8EAD125B2A8A6FE800BA8797 /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAD125A2A8A6FE800BA8797 /* Review.swift */; };
+		8EAD125D2A8A70BD00BA8797 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAD125C2A8A70BD00BA8797 /* Trip.swift */; };
+		8EAD125F2A8A717B00BA8797 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAD125E2A8A717B00BA8797 /* Feedback.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +115,11 @@
 		E3F50DA42A89AEBD009EFFF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E3F50DA62A8A90A7009EFFF8 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = SOURCE_ROOT; };
 		E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		8E6C88FF2A86A79800149737 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		8EAD12582A8A6EAD00BA8797 /* Destination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Destination.swift; sourceTree = "<group>"; };
+		8EAD125A2A8A6FE800BA8797 /* Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Review.swift; sourceTree = "<group>"; };
+		8EAD125C2A8A70BD00BA8797 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
+		8EAD125E2A8A717B00BA8797 /* Feedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +213,11 @@
 			children = (
 				E3F50DA62A8A90A7009EFFF8 /* UserModel.swift */,
 				6F162DCA2A8BFB3B004DC668 /* TripModel.swift */,
+				8E6C88FF2A86A79800149737 /* User.swift */,
+				8EAD12582A8A6EAD00BA8797 /* Destination.swift */,
+				8EAD125A2A8A6FE800BA8797 /* Review.swift */,
+				8EAD125C2A8A70BD00BA8797 /* Trip.swift */,
+				8EAD125E2A8A717B00BA8797 /* Feedback.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -362,10 +377,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F162DBA2A887E55004DC668 /* ValidationManager.swift in Sources */,
+				8EAD125D2A8A70BD00BA8797 /* Trip.swift in Sources */,
 				8E6C88F42A86A62100149737 /* DestinationViewViewModel.swift in Sources */,
 				E3F50DA92A8A91F0009EFFF8 /* DataManager.swift in Sources */,
 				8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */,
 				6F162DCD2A8C20FD004DC668 /* TitledTextEditor.swift in Sources */,
+				8EAD125B2A8A6FE800BA8797 /* Review.swift in Sources */,
+				8EAD12592A8A6EAD00BA8797 /* Destination.swift in Sources */,
 				8E6C88EE2A86A5EA00149737 /* LoginViewViewModel.swift in Sources */,
 				8E6C88F62A86A63300149737 /* TripPlanningViewViewModel.swift in Sources */,
 				8E6C88B12A86A16100149737 /* ProfileView.swift in Sources */,
@@ -393,6 +411,8 @@
 				6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */,
 				8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */,
 				8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */,
+				8E6C89002A86A79800149737 /* User.swift in Sources */,
+				8EAD125F2A8A717B00BA8797 /* Feedback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

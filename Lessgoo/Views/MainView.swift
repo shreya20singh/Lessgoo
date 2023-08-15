@@ -13,11 +13,11 @@ struct MainView: View {
 
     var body: some View {
 //        TitledTextField(title: "Trip name", text: $sampleText, validationManager: sampleVM)
-//        TripPlanningView()
+        TripPlanningView()
 //        TripPlanningView()
 //        DestinationSearchView()
 //        ProfilePresentView()
-        ProfileView()
+//        ProfileView()
     }
 }
 

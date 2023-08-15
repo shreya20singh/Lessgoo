@@ -104,7 +104,8 @@ struct LoginView: View {
             if error != nil {
                 print(error!.localizedDescription)
             } else {
-                userIsLoggedIn.loggedIn = true 
+                userIsLoggedIn.loggedIn = true
+                dataManager.preserveCurrentUserEmail(email: email)
             }
         }
     }

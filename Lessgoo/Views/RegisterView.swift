@@ -123,6 +123,7 @@ struct RegisterView: View {
             } else {
                 dataManager.addUser(email: email, name: username, location: location, passowrd: password)
                 userIsLoggedIn.loggedIn = true
+                dataManager.preserveCurrentUserEmail(email: email)
             }
         }
     }

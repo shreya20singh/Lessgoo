@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TripPlanningView: View {
     @State private var showingSheet = false
+    @EnvironmentObject var dataManager: DataManager
     
     // Sample data for the list
     let trips = [
@@ -42,7 +43,7 @@ struct TripPlanningView: View {
                 
                 Spacer()
                 
-                Button("Show Modal", action: {
+                Button("Create Trip", action: {
                     showingSheet.toggle()
                 })
                 .sheet(isPresented: $showingSheet, content: {

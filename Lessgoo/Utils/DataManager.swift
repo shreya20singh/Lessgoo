@@ -10,6 +10,7 @@ import Firebase
 
 class DataManager: ObservableObject {
     @Published var users: [User] = []
+    @Published var currentUserEmail = ""
     let db = Firestore.firestore()
     
     
@@ -44,7 +45,9 @@ class DataManager: ObservableObject {
         }
     }
     
-    
+    func preserveCurrentUserEmail(email: String) {
+        self.currentUserEmail = email
+    }
     
     func addUser(email: String, name: String, location: String, passowrd: String) {
         

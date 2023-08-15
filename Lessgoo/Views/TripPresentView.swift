@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct TripPresentView: View {
-    var tripName: String = "Default Trip"
-    var tripNameSub: String = "By Jialiang Xiao 0 Items"
+    @State var tripNameSub: String = ""
     var tripImage: Image = Image(systemName: "photo") // Using system icon as placeholder
     
+    @State var trip: Trip?
+    @EnvironmentObject var dataManager: DataManager
     var body: some View {
         ScrollView{
             VStack(alignment: .leading, spacing: 5) {
@@ -23,9 +24,25 @@ struct TripPresentView: View {
                 
                 Spacer()
                 
-                Text(tripName)
-                    .font(.title)
-                    .foregroundColor(.primary)
+                HStack {
+                    Text(trip?.title ?? "Default Trip")
+                        .font(.title)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    if trip?.privacy == "true" {
+                        Image(systemName: "lock.fill")
+                            .foregroundColor(.blue)
+                        Text("Private")
+                            .font(.body)
+                            .foregroundColor(.blue)
+                    } else {
+                        Image(systemName: "lock.open.fill")
+                            .foregroundColor(.green)
+                        Text("Public")
+                            .font(.body)
+                            .foregroundColor(.green)
+                    }
+                }
                 
                 Spacer()
                 
@@ -35,21 +52,53 @@ struct TripPresentView: View {
                 
                 Spacer()
                 
+                ExpandableText("Description: \(trip?.description ?? "No Description")")                
+                
+                Text("Destinations: \(trip?.destinations.joined(separator: ", ") ?? "No Destinations")")
+                    .font(.body)
+                    .foregroundColor(.primary)
+                
+                Text("Duration: \(formattedDuration(trip?.duration))")
+                    .font(.body)
+                    .foregroundColor(.primary)
+                
             }
             .padding(10)
         }
         .navigationBarItems(
             trailing: HStack {
-                NavigationLink(destination: TripEditView()) {
+                NavigationLink(destination: TripEditView(trip: trip)) {
                     Image(systemName: "square.and.arrow.up.fill")
                 }
                 
-                NavigationLink(destination: TripEditView()) {
+                NavigationLink(destination: TripEditView(trip: trip)) {
                     Image(systemName: "pencil")
                 }
-           }
+            }
         )
+        .onAppear {
+            self.tripNameSub = getSubTitle()
+            if let tripId = trip?.id {
+                dataManager.fetchTrip(byId: tripId) { fetchedTrip in
+                    if let fetchedTrip = fetchedTrip {
+                        self.trip = fetchedTrip
+                    }
+                }
+            }
+        }
     }
+    
+    func getSubTitle() -> String {
+        return "By \(dataManager.currentUserEmail)"
+    }
+
+    func formattedDuration(_ duration: String?) -> String {
+        guard let duration = duration, let days = Int(duration) else {
+            return "No Duration"
+        }
+        return days == 1 ? "1 day" : "\(days) days"
+    }
+
 }
 
 struct TripPresentView_Previews: PreviewProvider {

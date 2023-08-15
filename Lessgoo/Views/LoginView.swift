@@ -17,7 +17,8 @@ struct LoginView: View {
     
     var body: some View {
         if userIsLoggedIn.loggedIn {
-            SettingsView().environmentObject(dataManager)
+//            SettingsView().environmentObject(dataManager)
+            TripPlanningView().environmentObject(dataManager)
         } else {
             content
         }

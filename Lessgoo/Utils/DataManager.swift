@@ -11,6 +11,7 @@ import Firebase
 class DataManager: ObservableObject {
     @Published var users: [User] = []
     @Published var currentUserEmail = ""
+    @Published var trips: [Trip] = []
     let db = Firestore.firestore()
     
     
@@ -68,4 +69,80 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    func fetchTrips() {
+        guard currentUserEmail.count > 0 else {
+            return
+        }
+        
+        let ref = db.collection("Trip").whereField("collaborators", arrayContains: currentUserEmail)
+        
+        ref.getDocuments { snapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            
+            if let snapshot = snapshot {
+                let trips = snapshot.documents.map { document -> Trip in
+                    let data = document.data()
+                    return Trip(
+                        id: document.documentID,
+                        collaborators: data["collaborators"] as? [String] ?? [],
+                        description: data["description"] as? String ?? "",
+                        destinations: data["destinations"] as? [String] ?? [],
+                        duration: data["duration"] as? String ?? "",
+                        privacy: data["privacy"] as? String ?? "",
+                        title: data["title"] as? String ?? ""
+                    )
+                }
+                self.trips = trips
+            }
+        }
+    }
+    
+    func fetchTrip(byId id: String, completion: @escaping (Trip?) -> Void) {
+        let ref = db.collection("Trip").document(id)
+        
+        ref.getDocument { snapshot, error in
+            guard error == nil, let snapshot = snapshot else {
+                print(error?.localizedDescription ?? "Unknown error")
+                completion(nil)
+                return
+            }
+            
+            let data = snapshot.data()
+            let trip = Trip(
+                id: snapshot.documentID,
+                collaborators: data?["collaborators"] as? [String] ?? [],
+                description: data?["description"] as? String ?? "",
+                destinations: data?["destinations"] as? [String] ?? [],
+                duration: data?["duration"] as? String ?? "",
+                privacy: data?["privacy"] as? String ?? "",
+                title: data?["title"] as? String ?? ""
+            )
+            
+            completion(trip)
+        }
+    }
+
+    
+    func updateTrip(tripId: String, title: String, description: String, destinations: [String], duration: String, privacy: String, completion: @escaping (Error?) -> Void) {
+        let ref = db.collection("Trip").document(tripId)
+        ref.updateData([
+            "title": title,
+            "description": description,
+            "destinations": destinations,
+            "duration": duration,
+            "privacy": privacy
+        ]) { error in
+            completion(error)
+            if let error = error {
+                print("Error updating document: \(error)")
+            } else {
+                print("Document successfully updated")
+            }
+        }
+    }
+
 }

@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F162DB82A887C61004DC668 /* TitledTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DB72A887C61004DC668 /* TitledTextField.swift */; };
+		6F162DBA2A887E55004DC668 /* ValidationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DB92A887E55004DC668 /* ValidationManager.swift */; };
+		6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DBC2A888198004DC668 /* CreateTripView.swift */; };
+		6F162DBF2A888DA1004DC668 /* TripListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DBE2A888DA1004DC668 /* TripListCellView.swift */; };
+		6F162DC12A88912F004DC668 /* TripPresentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC02A88912F004DC668 /* TripPresentView.swift */; };
+		6F162DC32A8895E7004DC668 /* TripEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC22A8895E7004DC668 /* TripEditView.swift */; };
+		6F162DC52A889A3F004DC668 /* DestinationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC42A889A3F004DC668 /* DestinationSearchView.swift */; };
+		6F162DC72A889D43004DC668 /* ProfilePresentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC62A889D43004DC668 /* ProfilePresentView.swift */; };
+		6F162DC92A88A54E004DC668 /* ReviewSingleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DC82A88A54E004DC668 /* ReviewSingleView.swift */; };
 		8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88922A869B9200149737 /* LessgooApp.swift */; };
 		8E6C88972A869B9800149737 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88962A869B9800149737 /* Assets.xcassets */; };
 		8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88992A869B9800149737 /* Preview Assets.xcassets */; };
@@ -61,6 +70,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F162DB72A887C61004DC668 /* TitledTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledTextField.swift; sourceTree = "<group>"; };
+		6F162DB92A887E55004DC668 /* ValidationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationManager.swift; sourceTree = "<group>"; };
+		6F162DBC2A888198004DC668 /* CreateTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTripView.swift; sourceTree = "<group>"; };
+		6F162DBE2A888DA1004DC668 /* TripListCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripListCellView.swift; sourceTree = "<group>"; };
+		6F162DC02A88912F004DC668 /* TripPresentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPresentView.swift; sourceTree = "<group>"; };
+		6F162DC22A8895E7004DC668 /* TripEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripEditView.swift; sourceTree = "<group>"; };
+		6F162DC42A889A3F004DC668 /* DestinationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationSearchView.swift; sourceTree = "<group>"; };
+		6F162DC62A889D43004DC668 /* ProfilePresentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresentView.swift; sourceTree = "<group>"; };
+		6F162DC82A88A54E004DC668 /* ReviewSingleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSingleView.swift; sourceTree = "<group>"; };
 		8E6C888F2A869B9200149737 /* Lessgoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lessgoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6C88922A869B9200149737 /* LessgooApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessgooApp.swift; sourceTree = "<group>"; };
 		8E6C88962A869B9800149737 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -126,6 +144,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F162DBB2A888155004DC668 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				6F162DB72A887C61004DC668 /* TitledTextField.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		8E6C88862A869B9200149737 = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +171,7 @@
 		8E6C88912A869B9200149737 /* Lessgoo */ = {
 			isa = PBXGroup;
 			children = (
+				6F162DBB2A888155004DC668 /* Components */,
 				8E6C88A32A869EF800149737 /* Utils */,
 				8E6C88A22A869EE800149737 /* ViewModels */,
 				8E6C88A12A869EE000149737 /* Views */,
@@ -182,6 +209,13 @@
 				8E6C88AE2A86A14300149737 /* TripPlanningView.swift */,
 				8E6C88B02A86A16100149737 /* ProfileView.swift */,
 				8E6C88B22A86A17100149737 /* SettingsView.swift */,
+				6F162DBC2A888198004DC668 /* CreateTripView.swift */,
+				6F162DBE2A888DA1004DC668 /* TripListCellView.swift */,
+				6F162DC02A88912F004DC668 /* TripPresentView.swift */,
+				6F162DC22A8895E7004DC668 /* TripEditView.swift */,
+				6F162DC42A889A3F004DC668 /* DestinationSearchView.swift */,
+				6F162DC62A889D43004DC668 /* ProfilePresentView.swift */,
+				6F162DC82A88A54E004DC668 /* ReviewSingleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -208,6 +242,7 @@
 				8E6C88FB2A86A66400149737 /* Launch Screen.storyboard */,
 				E3F50DA42A89AEBD009EFFF8 /* GoogleService-Info.plist */,
 				8E6C88FD2A86A67800149737 /* Extensions.swift */,
+				6F162DB92A887E55004DC668 /* ValidationManager.swift */,
 				E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */,
 			);
 			path = Utils;
@@ -317,6 +352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F162DBA2A887E55004DC668 /* ValidationManager.swift in Sources */,
 				8E6C88F42A86A62100149737 /* DestinationViewViewModel.swift in Sources */,
 				E3F50DA92A8A91F0009EFFF8 /* DataManager.swift in Sources */,
 				8E6C88FE2A86A67800149737 /* Extensions.swift in Sources */,
@@ -325,16 +361,24 @@
 				8E6C88B12A86A16100149737 /* ProfileView.swift in Sources */,
 				8E6C88F02A86A60000149737 /* RegisterViewViewModel.swift in Sources */,
 				8E6C88AD2A86A13300149737 /* DestinationDetailView.swift in Sources */,
+				6F162DC72A889D43004DC668 /* ProfilePresentView.swift in Sources */,
 				8E6C88AF2A86A14300149737 /* TripPlanningView.swift in Sources */,
 				8E6C88B32A86A17100149737 /* SettingsView.swift in Sources */,
+				6F162DB82A887C61004DC668 /* TitledTextField.swift in Sources */,
 				8E6C88A72A86A0F200149737 /* LoginView.swift in Sources */,
 				8E6C88A92A86A10800149737 /* RegisterView.swift in Sources */,
+				6F162DC32A8895E7004DC668 /* TripEditView.swift in Sources */,
 				8E6C88A52A86A0CE00149737 /* MainView.swift in Sources */,
+				6F162DC92A88A54E004DC668 /* ReviewSingleView.swift in Sources */,
+				6F162DC52A889A3F004DC668 /* DestinationSearchView.swift in Sources */,
 				8E6C88AB2A86A11800149737 /* HomeView.swift in Sources */,
 				8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */,
 				8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */,
+				6F162DC12A88912F004DC668 /* TripPresentView.swift in Sources */,
+				6F162DBF2A888DA1004DC668 /* TripListCellView.swift in Sources */,
 				E3F50DA72A8A90A7009EFFF8 /* UserModel.swift in Sources */,
 				8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */,
+				6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */,
 				8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */,
 				8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */,
 			);
@@ -485,7 +529,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = crypticminds.Lessgoo;
+				PRODUCT_BUNDLE_IDENTIFIER = conm.jay.lessgo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -517,7 +561,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = crypticminds.Lessgoo;
+				PRODUCT_BUNDLE_IDENTIFIER = conm.jay.lessgo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

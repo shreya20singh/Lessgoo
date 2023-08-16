@@ -77,10 +77,3 @@ struct TripEditView: View {
         }
     }
 }
-
-//struct TripEditView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let sampleTrip = Trip(id: "1", collaborators: [], description: "Sample Description", destinations: ["Place1", "Place2"], duration: "1 day", privacy: "Private", title: "Sample Trip")
-//        TripEditView(trip: sampleTrip)
-//    }
-//}

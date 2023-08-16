@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseStorage
 
 class DataManager: ObservableObject {
     @Published var users: [User] = []
@@ -294,5 +295,147 @@ class DataManager: ObservableObject {
                 self.currentUserProfile = profile
             }
         }
+    }
+    
+    func saveProfile(fullName: String, aboutYou: String, location: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard !currentUserEmail.isEmpty else {
+            print("No current user email set")
+            completion(.failure(NSError(domain: "Error", code: -1, userInfo: ["description": "No current user email set"])))
+            return
+        }
+        
+        let userRef = db.collection("Users").document(currentUserEmail)
+        
+        userRef.getDocument { userSnapshot, userError in
+            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                print(userError?.localizedDescription ?? "Unknown error")
+                completion(.failure(userError ?? NSError(domain: "Error", code: -1, userInfo: ["description": "Unknown error"])))
+                return
+            }
+            
+            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+            let profileRef = self.db.collection("Profile").document(profileDocumentId)
+            
+            let updatedProfileData: [String: Any] = [
+                "fullName": fullName,
+                "aboutYou": aboutYou,
+                "location": location
+            ]
+            
+            profileRef.setData(updatedProfileData, merge: true) { error in
+                if let error = error {
+                    print("Error saving profile: \(error.localizedDescription)")
+                    completion(.failure(error))
+                } else {
+                    print("Profile saved successfully")
+                    completion(.success(()))
+                    
+                    // Update the currentUserProfile property
+                    var updatedProfile = self.currentUserProfile ?? Profile(id: profileDocumentId, fullName: "", location: "", joinDate: "", photoURL: "", aboutYou: "", uploadedPhotoURLs: [])
+                    updatedProfile.fullName = fullName
+                    updatedProfile.aboutYou = aboutYou
+                    updatedProfile.location = location
+                    self.currentUserProfile = updatedProfile
+                }
+            }
+        }
+    }
+    
+    func saveProfile(fullName: String, aboutYou: String, location: String, photoURL: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard !currentUserEmail.isEmpty else {
+            print("No current user email set")
+            completion(.failure(NSError(domain: "Error", code: -1, userInfo: ["description": "No current user email set"])))
+            return
+        }
+        
+        let userRef = db.collection("Users").document(currentUserEmail)
+        
+        userRef.getDocument { userSnapshot, userError in
+            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                print(userError?.localizedDescription ?? "Unknown error")
+                completion(.failure(userError ?? NSError(domain: "Error", code: -1, userInfo: ["description": "Unknown error"])))
+                return
+            }
+            
+            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+            let profileRef = self.db.collection("Profile").document(profileDocumentId)
+            
+            let updatedProfileData: [String: Any] = [
+                "fullName": fullName,
+                "aboutYou": aboutYou,
+                "location": location,
+                "photoURL": photoURL
+            ]
+            
+            profileRef.setData(updatedProfileData, merge: true) { error in
+                if let error = error {
+                    print("Error saving profile: \(error.localizedDescription)")
+                    completion(.failure(error))
+                } else {
+                    print("Profile saved successfully")
+                    completion(.success(()))
+                    
+                    // Update the currentUserProfile property
+                    var updatedProfile = self.currentUserProfile ?? Profile(id: profileDocumentId, fullName: "", location: "", joinDate: "", photoURL: "", aboutYou: "", uploadedPhotoURLs: [])
+                    updatedProfile.fullName = fullName
+                    updatedProfile.aboutYou = aboutYou
+                    updatedProfile.location = location
+                    updatedProfile.photoURL = photoURL
+                    self.currentUserProfile = updatedProfile
+                }
+            }
+        }
+    }
+    
+    func uploadProfilePicture(_ image: UIImage, completion: @escaping (Result<String, Error>) -> Void) {
+        guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
+            completion(.failure(NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)))
+            return
+        }
+
+        let storageRef = Storage.storage().reference()
+        let profilePictureRef = storageRef.child("profilePictures/\(currentUserEmail).jpg")
+
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+
+        profilePictureRef.putData(data, metadata: metadata) { (metadata, error) in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            profilePictureRef.downloadURL { (url, error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+
+                guard let url = url else {
+                    completion(.failure(NSError(domain: "Failed to retrieve download URL", code: 0, userInfo: nil)))
+                    return
+                }
+
+                completion(.success(url.absoluteString))
+            }
+        }
+    }
+
+    func uploadProfilePictureAsync(_ image: UIImage) async throws -> String {
+        guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
+            throw NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)
+        }
+
+        let storageRef = Storage.storage().reference()
+        let profilePictureRef = storageRef.child("profilePictures/\(currentUserEmail).jpg")
+
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+
+        let _ = try await profilePictureRef.putDataAsync(data, metadata: metadata)
+
+        let url = try await profilePictureRef.downloadURL()
+
+        return url.absoluteString
     }
 }

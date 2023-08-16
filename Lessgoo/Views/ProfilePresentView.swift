@@ -9,9 +9,7 @@ import SwiftUI
 
 struct ProfilePresentView: View {
     @EnvironmentObject var dataManager: DataManager
-    var profile: Profile? {
-        dataManager.currentUserProfile
-    }
+    var profile: Profile?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -19,7 +17,10 @@ struct ProfilePresentView: View {
                 if let profile = profile, let url = URL(string: profile.photoURL) {
                     AsyncImage(url: url, content: {
                         image in
-                        image.resizable().scaledToFit()
+                        image
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
                     }, placeholder: {
                         ProgressView()
                     })
@@ -30,8 +31,16 @@ struct ProfilePresentView: View {
                         .clipShape(Circle())
                 }
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(profile?.fullName ?? "Full name")
-                        .font(.title)
+                    HStack {
+                        Text(profile?.fullName ?? "Full name")
+                            .font(.title)
+                        Spacer()
+                        NavigationLink(destination: ProfileEditView(profile: profile)) {
+                            Image(systemName: "pencil")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                        }
+                    }
                     Text(profile?.joinDate ?? "Join date")
                         .font(.subheadline)
                 }
@@ -40,6 +49,11 @@ struct ProfilePresentView: View {
             HStack {
                 Text(profile?.location ?? "Location")
                 Spacer()
+            }
+        }
+        .onAppear {
+            Task {
+                dataManager.fetchProfile()
             }
         }
     }

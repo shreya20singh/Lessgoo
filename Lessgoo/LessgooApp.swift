@@ -19,7 +19,15 @@ struct LessgooApp: App {
     
     var body: some Scene {
         WindowGroup {
-            LoginView().environmentObject(dataManager)
+            ContentView()
+                .environmentObject(dataManager) // Provide the dataManager to the environment
         }
     }
 }
+
+struct ContentView: View {
+    var body: some View {
+        LoginView()
+    }
+}
+

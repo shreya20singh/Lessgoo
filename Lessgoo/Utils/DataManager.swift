@@ -15,6 +15,11 @@ class DataManager: ObservableObject {
     @Published var trips: [Trip] = []
     @Published var destinations: [Destination] = []
     @Published var reviewsForDestination: [Review] = []
+    @Published var tags: [String] = []
+    @Published var selectedTags: Set<String> = []
+    @Published var selectedSortOption: SortOption = .name
+    
+    
     let db = Firestore.firestore()
     
     
@@ -230,7 +235,6 @@ class DataManager: ObservableObject {
                         let reviewid = data["id"] as? String ?? ""
                         let rating = data["rating"] as? String ?? ""
                         let reviewDescription = data["reviewDescription"] as? String ?? ""
-                        print(reviewDescription)
                         let timestamp = data["timestamp"] as? String ?? ""
                         let title = data["title"] as? String ?? ""
                         let review = Review(id: reviewid,
@@ -264,6 +268,8 @@ class DataManager: ObservableObject {
                         let destinationOwner = data["owner"] as? String ?? ""
                         let destinationDescription = data["description"] as? String ?? ""
                         let ageRecomended = data["ageReccomendation"] as? String ?? ""
+                        let location = data["location"] as? String ?? ""
+                        let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
                         self.fetchReviewForDestination(destinationID: id)
                         let destination = Destination(id: id,
                                                       destinationName: destinationName,
@@ -271,7 +277,10 @@ class DataManager: ObservableObject {
                                                       destinationDescription: destinationDescription,
                                                       image: destImage,
                                                       reviews: self.reviewsForDestination,
-                                                      ageRecomended: ageRecomended)
+                                                      ageRecomended: ageRecomended,
+                                                      location: location,
+                                                      tags: tags
+                        )
                         self.destinations.append(destination)
                     }
                 }
@@ -279,6 +288,63 @@ class DataManager: ObservableObject {
         }
     }
     
-    
+    func fetchFilteredDestinations(searchText: String, selectedTags: Set<String>, selectedSortOption: SortOption) {
+        destinations.removeAll()
+        var query = db.collection("Destination")
+        
+        if !searchText.isEmpty {
+            query = query.whereField("destinationName", isGreaterThanOrEqualTo: searchText) as! CollectionReference
+        }
+        
+        if !selectedTags.isEmpty {
+            query = query.whereField("tags", arrayContainsAny: Array(selectedTags)) as! CollectionReference
+        }
+        
+        switch selectedSortOption {
+        case .name:
+            query = query.order(by: "destinationName") as! CollectionReference
+        case .favorites:
+            // Implement sorting by number of favorites
+            break
+        case .rating:
+            query = query.order(by: "averageRating", descending: true) as! CollectionReference
+        }
+        
+        query.getDocuments { snapshot, error in
+            guard error == nil, let snapshot = snapshot else {
+                print(error?.localizedDescription ?? "Unknown error")
+                return
+            }
+            
+            var fetchedDestinations: [Destination] = []
+            for document in snapshot.documents {
+                let data = document.data()
+                let id = data["id"] as? String ?? ""
+                let destinationName = data["name"] as? String ?? ""
+                let destImage = data["image"] as? String ?? ""
+                let destinationOwner = data["owner"] as? String ?? ""
+                let destinationDescription = data["description"] as? String ?? ""
+                let ageRecomended = data["ageReccomendation"] as? String ?? ""
+                let location = data["location"] as? String ?? ""
+                let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
+                self.fetchReviewForDestination(destinationID: id)
+                let destination = Destination(id: id,
+                                              destinationName: destinationName,
+                                              destinationOwner: destinationOwner,
+                                              destinationDescription: destinationDescription,
+                                              image: destImage,
+                                              reviews: self.reviewsForDestination,
+                                              ageRecomended: ageRecomended,
+                                              location: location,
+                                              tags: tags
+                )
+                self.destinations.append(destination)
+            }
+            
+            self.destinations = fetchedDestinations
+        }
+    }
+
+   
 
 }

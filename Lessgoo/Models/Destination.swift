@@ -15,4 +15,6 @@ struct Destination: Codable, Identifiable{
     let image: String
     let reviews: [Review]
     let ageRecomended: String
+    let location: String
+    let tags: [String]
 }

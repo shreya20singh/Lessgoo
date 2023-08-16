@@ -29,6 +29,7 @@ class DataManager: ObservableObject {
         fetchDestinations()
         // You can get all information you need here by calling certain queries.
     }
+    
     func fetchUsers() {
         users.removeAll()
         
@@ -238,6 +239,7 @@ class DataManager: ObservableObject {
             print("CSV file not found")
         }
     }
+    
 
     
     func convertTimestampToTimeInterval(timestampString: String) -> TimeInterval {
@@ -279,6 +281,10 @@ class DataManager: ObservableObject {
                         self.reviewsForDestination.append(review)
                     }
                 }
+                
+            }
+        }
+    }
 
     func createTrip(title: String, privacy: String, completion: @escaping (Error?) -> Void) {
         guard !currentUserEmail.isEmpty else {

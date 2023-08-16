@@ -7,18 +7,26 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 import FirebaseStorage
 
 class DataManager: ObservableObject {
     @Published var users: [User] = []
     @Published var currentUserEmail = ""
     @Published var trips: [Trip] = []
+    @Published var destinations: [Destination] = []
+    @Published var reviewsForDestination: [Review] = []
+    @Published var tags: [String] = []
+    @Published var selectedTags: Set<String> = []
+    @Published var selectedSortOption: SortOption = .name
     @Published var currentUserProfile: Profile? = nil
+
     let db = Firestore.firestore()
     
     
     init() {
         fetchUsers()
+        fetchDestinations()
         // You can get all information you need here by calling certain queries.
     }
     func fetchUsers() {
@@ -179,6 +187,99 @@ class DataManager: ObservableObject {
         }
     }
     
+    func loadDatabase(fromCSV fileName: String) {
+        // Fetch the path of the CSV file in your app bundle
+        if let filePath = Bundle.main.path(forResource: fileName, ofType: "csv") {
+            do {
+                let csvData = try String(contentsOfFile: filePath)
+                
+                // Split CSV data into lines
+                let csvLines = csvData.components(separatedBy: "\n")
+                
+                for csvLine in csvLines {
+                    let csvValues = csvLine.components(separatedBy: ",")
+                    if csvValues.count >= 9 {
+                        let id = csvValues[0]
+                        let name = csvValues[1]
+                        let description = csvValues[2]
+                        let image = csvValues[3]
+                        let localLanguages = csvValues[4]
+                        let location = csvValues[5]
+                        let owner = csvValues[6]
+                        let ageRecomendation = csvValues[7]
+                        let tags = csvValues[8]
+                        
+                        // Create a new document in the "destination" collection
+                        let destinationRef = db.collection("Destination").document(id)
+                        destinationRef.setData([
+                            "id": id,
+                            "name": name,
+                            "description": description,
+                            "image": image,
+                            "localLanguages": localLanguages,
+                            "location": location,
+                            "owner": owner,
+                            "ageReccomendation": ageRecomendation,
+                            "tags": tags
+                            // Add more fields as needed
+                        ]) { error in
+                            if let error = error {
+                                print("Error adding document: \(error)")
+                            } else {
+                                print("Document added with ID: \(id)")
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print("Error reading CSV file: \(error.localizedDescription)")
+            }
+        } else {
+            print("CSV file not found")
+        }
+    }
+
+    
+    func convertTimestampToTimeInterval(timestampString: String) -> TimeInterval {
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            
+            if let date = dateFormatter.date(from: timestampString) {
+                return date.timeIntervalSince1970
+            } else {
+                return 0 // Return a default value or handle error as needed
+            }
+        }
+    
+    func fetchReviewForDestination(destinationID: String){
+        reviewsForDestination.removeAll()
+        let refReview = self.db.collection("Review")
+        refReview.getDocuments { reviewSnapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            
+            if let snapshotReview = reviewSnapshot {
+                for document in snapshotReview.documents {
+                    let data = document.data()
+                    let destinationId = data["destinationId"] as? String ?? ""
+                    if(destinationId == destinationID){
+                        let reviewid = data["id"] as? String ?? ""
+                        let rating = data["rating"] as? String ?? ""
+                        let reviewDescription = data["reviewDescription"] as? String ?? ""
+                        let timestamp = data["timestamp"] as? String ?? ""
+                        let title = data["title"] as? String ?? ""
+                        let review = Review(id: reviewid,
+                                            destinationId: destinationId,
+                                            rating: rating,
+                                            title: title,
+                                            reviewDescription: reviewDescription,
+                                            timestamp: self.convertTimestampToTimeInterval(timestampString: timestamp))
+                        self.reviewsForDestination.append(review)
+                    }
+                }
+
     func createTrip(title: String, privacy: String, completion: @escaping (Error?) -> Void) {
         guard !currentUserEmail.isEmpty else {
             completion(NSError(domain: "DataManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "No current user email set"]))
@@ -216,10 +317,107 @@ class DataManager: ObservableObject {
             } else {
                 self.trips.removeAll(where: { $0.id == tripId })
                 print("Document successfully removed!")
+
             }
         }
     }
     
+    func fetchDestinations() {
+        destinations.removeAll()
+        
+        let ref = db.collection("Destination")
+        ref.getDocuments { snapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+                if let snapshot = snapshot {
+                    for document in snapshot.documents {
+                        let data = document.data()
+                        let id = data["id"] as? String ?? ""
+                        let destinationName = data["name"] as? String ?? ""
+                        let destImage = data["image"] as? String ?? ""
+                        let destinationOwner = data["owner"] as? String ?? ""
+                        let destinationDescription = data["description"] as? String ?? ""
+                        let ageRecomended = data["ageReccomendation"] as? String ?? ""
+                        let location = data["location"] as? String ?? ""
+                        let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
+                        self.fetchReviewForDestination(destinationID: id)
+                        let destination = Destination(id: id,
+                                                      destinationName: destinationName,
+                                                      destinationOwner: destinationOwner,
+                                                      destinationDescription: destinationDescription,
+                                                      image: destImage,
+                                                      reviews: self.reviewsForDestination,
+                                                      ageRecomended: ageRecomended,
+                                                      location: location,
+                                                      tags: tags
+                        )
+                        self.destinations.append(destination)
+                    }
+                }
+            
+        }
+    }
+    
+    func fetchFilteredDestinations(searchText: String, selectedTags: Set<String>, selectedSortOption: SortOption) {
+        destinations.removeAll()
+        var query = db.collection("Destination")
+        
+        if !searchText.isEmpty {
+            query = query.whereField("destinationName", isGreaterThanOrEqualTo: searchText) as! CollectionReference
+        }
+        
+        if !selectedTags.isEmpty {
+            query = query.whereField("tags", arrayContainsAny: Array(selectedTags)) as! CollectionReference
+        }
+        
+        switch selectedSortOption {
+        case .name:
+            query = query.order(by: "destinationName") as! CollectionReference
+        case .favorites:
+            // Implement sorting by number of favorites
+            break
+        case .rating:
+            query = query.order(by: "averageRating", descending: true) as! CollectionReference
+        }
+        
+        query.getDocuments { snapshot, error in
+            guard error == nil, let snapshot = snapshot else {
+                print(error?.localizedDescription ?? "Unknown error")
+                return
+            }
+            
+            var fetchedDestinations: [Destination] = []
+            for document in snapshot.documents {
+                let data = document.data()
+                let id = data["id"] as? String ?? ""
+                let destinationName = data["name"] as? String ?? ""
+                let destImage = data["image"] as? String ?? ""
+                let destinationOwner = data["owner"] as? String ?? ""
+                let destinationDescription = data["description"] as? String ?? ""
+                let ageRecomended = data["ageReccomendation"] as? String ?? ""
+                let location = data["location"] as? String ?? ""
+                let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
+                self.fetchReviewForDestination(destinationID: id)
+                let destination = Destination(id: id,
+                                              destinationName: destinationName,
+                                              destinationOwner: destinationOwner,
+                                              destinationDescription: destinationDescription,
+                                              image: destImage,
+                                              reviews: self.reviewsForDestination,
+                                              ageRecomended: ageRecomended,
+                                              location: location,
+                                              tags: tags
+                )
+                self.destinations.append(destination)
+            }
+            
+            self.destinations = fetchedDestinations
+        }
+    }
+
+   
     func addCollaborator(email: String, toTrip tripId: String, completion: @escaping (Error?) -> Void) {
         print("addCollaborator addCollaborator tripId \(tripId)")
         let ref = db.collection("Trip").document(tripId)

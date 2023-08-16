@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+class HomeViewViewModel: ObservableObject {
+    @Published var destinations: [Destination] = []
+    
+    
+}

@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct Review: Codable{
-    let destination: Destination
+struct Review: Codable, Identifiable{
+    let id: String
+    let destinationId: String
     let rating: String
     let title: String
     let reviewDescription: String

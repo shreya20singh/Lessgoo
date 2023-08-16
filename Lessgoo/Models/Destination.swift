@@ -7,13 +7,12 @@
 
 import Foundation
 
-struct Destination: Codable{
+struct Destination: Codable, Identifiable{
     let id: String
     let destinationName: String
     let destinationOwner: String
-    let destionationDescription: String
+    let destinationDescription: String
     let image: String
-    let destinationPrice: String
-    let localLanguages: [String]
+    let reviews: [Review]
     let ageRecomended: String
 }

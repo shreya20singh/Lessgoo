@@ -12,11 +12,14 @@ class DataManager: ObservableObject {
     @Published var users: [User] = []
     @Published var currentUserEmail = ""
     @Published var trips: [Trip] = []
+    @Published var destinations: [Destination] = []
+    @Published var reviewsForDestination: [Review] = []
     let db = Firestore.firestore()
     
     
     init() {
         fetchUsers()
+        fetchDestinations()
         // You can get all information you need here by calling certain queries.
     }
     func fetchUsers() {
@@ -144,5 +147,85 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    
+    func convertTimestampToTimeInterval(timestampString: String) -> TimeInterval {
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            
+            if let date = dateFormatter.date(from: timestampString) {
+                return date.timeIntervalSince1970
+            } else {
+                return 0 // Return a default value or handle error as needed
+            }
+        }
+    
+    func fetchReviewForDestination(destinationID: String){
+        reviewsForDestination.removeAll()
+        let refReview = self.db.collection("Review")
+        refReview.getDocuments { reviewSnapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            
+            if let snapshotReview = reviewSnapshot {
+                for document in snapshotReview.documents {
+                    let data = document.data()
+                    let destinationId = data["destinationId"] as? String ?? ""
+                    if(destinationId == destinationID){
+                        let reviewid = data["id"] as? String ?? ""
+                        let rating = data["rating"] as? String ?? ""
+                        let reviewDescription = data["reviewDescription"] as? String ?? ""
+                        print(reviewDescription)
+                        let timestamp = data["timestamp"] as? String ?? ""
+                        let title = data["title"] as? String ?? ""
+                        let review = Review(id: reviewid,
+                                            destinationId: destinationId,
+                                            rating: rating,
+                                            title: title,
+                                            reviewDescription: reviewDescription,
+                                            timestamp: self.convertTimestampToTimeInterval(timestampString: timestamp))
+                        self.reviewsForDestination.append(review)
+                    }
+                }
+            }
+        }
+    }
+    
+    func fetchDestinations() {
+        destinations.removeAll()
+        
+        let ref = db.collection("Destination")
+        ref.getDocuments { snapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+                if let snapshot = snapshot {
+                    for document in snapshot.documents {
+                        let data = document.data()
+                        let id = data["id"] as? String ?? ""
+                        let destinationName = data["name"] as? String ?? ""
+                        let destImage = data["image"] as? String ?? ""
+                        let destinationOwner = data["owner"] as? String ?? ""
+                        let destinationDescription = data["description"] as? String ?? ""
+                        let ageRecomended = data["ageReccomendation"] as? String ?? ""
+                        self.fetchReviewForDestination(destinationID: id)
+                        let destination = Destination(id: id,
+                                                      destinationName: destinationName,
+                                                      destinationOwner: destinationOwner,
+                                                      destinationDescription: destinationDescription,
+                                                      image: destImage,
+                                                      reviews: self.reviewsForDestination,
+                                                      ageRecomended: ageRecomended)
+                        self.destinations.append(destination)
+                    }
+                }
+            
+        }
+    }
+    
+    
 
 }

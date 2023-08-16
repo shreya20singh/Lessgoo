@@ -15,15 +15,15 @@ class ValidationManager: ObservableObject {
     var numFailedAttempts: Int { _numFailedAttempts }
     
     func validateInput(_ input: String) {
-        guard input.count >= 4 else {
+        guard input.count >= 1 else {
             self._isInputValid = false
             return
         }
             
-        guard input.rangeOfCharacter(from: .letters) != nil else {
-            self._isInputValid = false
-            return
-        }
+//        guard input.rangeOfCharacter(from: .letters) != nil else {
+//            self._isInputValid = false
+//            return
+//        }
         self._isInputValid = true
     }
     

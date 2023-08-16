@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct TripListCellView: View {
-    var tripName: String = "Default Trip"
     var tripImage: Image = Image(systemName: "photo") // Using system icon as placeholder
-
+    var trip: Trip?
+    @EnvironmentObject var dataManager: DataManager
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             tripImage
@@ -19,7 +19,7 @@ struct TripListCellView: View {
                 .frame(width: 120, height: 120) // Adjust to your needs
                 .clipped()
             
-            Text(tripName)
+            Text(trip?.title ?? "Default Trip")
                 .font(.headline)
                 .foregroundColor(.primary)
         }
@@ -27,9 +27,9 @@ struct TripListCellView: View {
     }
 }
 
-struct TripListCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        TripListCellView(tripName: "Beach Trip", tripImage: Image(systemName: "sun.max.fill")) // Using system icon as example
-            .previewLayout(.sizeThatFits)
-    }
-}
+//struct TripListCellView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TripListCellView(tripName: "Beach Trip", tripImage: Image(systemName: "sun.max.fill")) // Using system icon as example
+//            .previewLayout(.sizeThatFits)
+//    }
+//}

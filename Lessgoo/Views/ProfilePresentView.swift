@@ -8,20 +8,37 @@
 import SwiftUI
 
 struct ProfilePresentView: View {
+    @EnvironmentObject var dataManager: DataManager
+    var profile: Profile? {
+        dataManager.currentUserProfile
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
-                Image(systemName: "pencil") // Profile photo image
+                if let profile = profile, let url = URL(string: profile.photoURL) {
+                    AsyncImage(url: url, content: {
+                        image in
+                        image.resizable().scaledToFit()
+                    }, placeholder: {
+                        ProgressView()
+                    })
+                } else {
+                    Image(systemName: "pencil")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                }
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("Full name")
+                    Text(profile?.fullName ?? "Full name")
                         .font(.title)
-                    Text("join date")
+                    Text(profile?.joinDate ?? "Join date")
                         .font(.subheadline)
                 }
             }
-            Text("About you")
+            Text(profile?.aboutYou ?? "About you")
             HStack {
-                Text("location")
+                Text(profile?.location ?? "Location")
                 Spacer()
             }
         }
@@ -31,5 +48,6 @@ struct ProfilePresentView: View {
 struct ProfilePresentView_Previews: PreviewProvider {
     static var previews: some View {
         ProfilePresentView()
+            .environmentObject(DataManager())
     }
 }

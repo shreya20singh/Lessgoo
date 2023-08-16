@@ -29,14 +29,19 @@ struct TripPlanningView: View {
                     }
                 }
 
-                
+            
                 Spacer()
                 
                 Button("Create Trip", action: {
                     showingSheet.toggle()
                 })
-                .sheet(isPresented: $showingSheet, content: {
+                .sheet(isPresented: $showingSheet, onDismiss: {
+                    Task {
+                        dataManager.fetchTrips()
+                    }
+                }, content: {
                     CreateTripView()
+                        .environmentObject(dataManager)
                         .presentationDetents([.fraction(0.4)])
                 })
                 

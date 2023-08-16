@@ -13,6 +13,9 @@ struct TripPresentView: View {
     
     @State var trip: Trip?
     @EnvironmentObject var dataManager: DataManager
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var showAlert = false
     var body: some View {
         ScrollView{
             VStack(alignment: .leading, spacing: 5) {
@@ -65,13 +68,27 @@ struct TripPresentView: View {
             }
             .padding(10)
         }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("Are you sure you want to delete this trip?"),
+                message: Text("This action cannot be undone."),
+                primaryButton: .destructive(Text("Delete")) {
+                    deleteTrip()
+                },
+                secondaryButton: .cancel()
+            )
+        }
+        .navigationBarTitle(trip?.title ?? "Default Trip", displayMode: .large)
         .navigationBarItems(
             trailing: HStack {
-                NavigationLink(destination: TripEditView(trip: trip)) {
-                    Image(systemName: "square.and.arrow.up.fill")
+                CollaboratorsButton(trip: trip!)
+                Button(action: {
+                    showAlert.toggle()
+                }) {
+                    Image(systemName: "trash")
                 }
                 
-                NavigationLink(destination: TripEditView(trip: trip)) {
+                NavigationLink(destination: TripEditView(trip: trip).environmentObject(dataManager)) {
                     Image(systemName: "pencil")
                 }
             }
@@ -97,6 +114,21 @@ struct TripPresentView: View {
             return "No Duration"
         }
         return days == 1 ? "1 day" : "\(days) days"
+    }
+    
+    func deleteTrip() {
+        guard let tripId = trip?.id else {
+            return
+        }
+
+        dataManager.deleteTrip(tripId: tripId) { error in
+            if let error = error {
+                print("Error deleting trip: \(error)")
+            } else {
+                print("Trip successfully deleted")
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
 
 }

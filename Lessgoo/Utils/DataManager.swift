@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 
 class DataManager: ObservableObject {
     @Published var users: [User] = []
@@ -148,6 +149,58 @@ class DataManager: ObservableObject {
         }
     }
     
+    func loadDatabase(fromCSV fileName: String) {
+        // Fetch the path of the CSV file in your app bundle
+        if let filePath = Bundle.main.path(forResource: fileName, ofType: "csv") {
+            do {
+                let csvData = try String(contentsOfFile: filePath)
+                
+                // Split CSV data into lines
+                let csvLines = csvData.components(separatedBy: "\n")
+                
+                for csvLine in csvLines {
+                    let csvValues = csvLine.components(separatedBy: ",")
+                    if csvValues.count >= 9 {
+                        let id = csvValues[0]
+                        let name = csvValues[1]
+                        let description = csvValues[2]
+                        let image = csvValues[3]
+                        let localLanguages = csvValues[4]
+                        let location = csvValues[5]
+                        let owner = csvValues[6]
+                        let ageRecomendation = csvValues[7]
+                        let tags = csvValues[8]
+                        
+                        // Create a new document in the "destination" collection
+                        let destinationRef = db.collection("Destination").document(id)
+                        destinationRef.setData([
+                            "id": id,
+                            "name": name,
+                            "description": description,
+                            "image": image,
+                            "localLanguages": localLanguages,
+                            "location": location,
+                            "owner": owner,
+                            "ageReccomendation": ageRecomendation,
+                            "tags": tags
+                            // Add more fields as needed
+                        ]) { error in
+                            if let error = error {
+                                print("Error adding document: \(error)")
+                            } else {
+                                print("Document added with ID: \(id)")
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print("Error reading CSV file: \(error.localizedDescription)")
+            }
+        } else {
+            print("CSV file not found")
+        }
+    }
+
     
     func convertTimestampToTimeInterval(timestampString: String) -> TimeInterval {
             let dateFormatter = ISO8601DateFormatter()

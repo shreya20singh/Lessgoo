@@ -19,6 +19,9 @@
 		6F162DCB2A8BFB3B004DC668 /* TripModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DCA2A8BFB3B004DC668 /* TripModel.swift */; };
 		6F162DCD2A8C20FD004DC668 /* TitledTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DCC2A8C20FD004DC668 /* TitledTextEditor.swift */; };
 		6F162DCF2A8C2617004DC668 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F162DCE2A8C2617004DC668 /* ExpandableText.swift */; };
+		8E224AA92A8CEDDB008AB728 /* HomeViewListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E224AA82A8CEDDB008AB728 /* HomeViewListCellView.swift */; };
+		8E224AAB2A8CF8CB008AB728 /* HomeCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E224AAA2A8CF8CB008AB728 /* HomeCellView.swift */; };
+		8E224AAD2A8CFE5B008AB728 /* Destination.csv in Resources */ = {isa = PBXBuildFile; fileRef = 8E224AAC2A8CFE5B008AB728 /* Destination.csv */; };
 		8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C88922A869B9200149737 /* LessgooApp.swift */; };
 		8E6C88972A869B9800149737 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88962A869B9800149737 /* Assets.xcassets */; };
 		8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E6C88992A869B9800149737 /* Preview Assets.xcassets */; };
@@ -88,6 +91,9 @@
 		6F162DCA2A8BFB3B004DC668 /* TripModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TripModel.swift; path = Lessgoo/Views/TripModel.swift; sourceTree = SOURCE_ROOT; };
 		6F162DCC2A8C20FD004DC668 /* TitledTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledTextEditor.swift; sourceTree = "<group>"; };
 		6F162DCE2A8C2617004DC668 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
+		8E224AA82A8CEDDB008AB728 /* HomeViewListCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewListCellView.swift; sourceTree = "<group>"; };
+		8E224AAA2A8CF8CB008AB728 /* HomeCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellView.swift; sourceTree = "<group>"; };
+		8E224AAC2A8CFE5B008AB728 /* Destination.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Destination.csv; sourceTree = "<group>"; };
 		8E6C888F2A869B9200149737 /* Lessgoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lessgoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6C88922A869B9200149737 /* LessgooApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessgooApp.swift; sourceTree = "<group>"; };
 		8E6C88962A869B9800149737 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -233,7 +239,9 @@
 				6F162DC22A8895E7004DC668 /* TripEditView.swift */,
 				6F162DC42A889A3F004DC668 /* DestinationSearchView.swift */,
 				6F162DC62A889D43004DC668 /* ProfilePresentView.swift */,
+				8E224AAA2A8CF8CB008AB728 /* HomeCellView.swift */,
 				6F162DC82A88A54E004DC668 /* ReviewSingleView.swift */,
+				8E224AA82A8CEDDB008AB728 /* HomeViewListCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -262,6 +270,7 @@
 				8E6C88FD2A86A67800149737 /* Extensions.swift */,
 				6F162DB92A887E55004DC668 /* ValidationManager.swift */,
 				E3F50DA82A8A91F0009EFFF8 /* DataManager.swift */,
+				8E224AAC2A8CFE5B008AB728 /* Destination.csv */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -357,6 +366,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E6C88FC2A86A66400149737 /* Launch Screen.storyboard in Resources */,
+				8E224AAD2A8CFE5B008AB728 /* Destination.csv in Resources */,
 				E3F50DA52A89AEBE009EFFF8 /* GoogleService-Info.plist in Resources */,
 				8E6C889A2A869B9800149737 /* Preview Assets.xcassets in Resources */,
 				8E6C88972A869B9800149737 /* Assets.xcassets in Resources */,
@@ -398,10 +408,12 @@
 				8E6C88EC2A86A5DA00149737 /* MainViewViewModel.swift in Sources */,
 				8E6C88F82A86A64200149737 /* ProfileViewViewModel.swift in Sources */,
 				6F162DC12A88912F004DC668 /* TripPresentView.swift in Sources */,
+				8E224AA92A8CEDDB008AB728 /* HomeViewListCellView.swift in Sources */,
 				6F162DBF2A888DA1004DC668 /* TripListCellView.swift in Sources */,
 				E3F50DA72A8A90A7009EFFF8 /* UserModel.swift in Sources */,
 				8E6C88F22A86A61100149737 /* HomeViewViewModel.swift in Sources */,
 				6F162DBD2A888198004DC668 /* CreateTripView.swift in Sources */,
+				8E224AAB2A8CF8CB008AB728 /* HomeCellView.swift in Sources */,
 				8E6C88FA2A86A65200149737 /* SettingsViewViewModel.swift in Sources */,
 				8E6C88932A869B9200149737 /* LessgooApp.swift in Sources */,
 				8EAD125F2A8A717B00BA8797 /* Feedback.swift in Sources */,
@@ -539,7 +551,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Lessgoo/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TVFW2DKZ2U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -553,7 +565,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = conm.jay.lessgo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.crypticminds;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -571,7 +583,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Lessgoo/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TVFW2DKZ2U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -585,7 +597,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = conm.jay.lessgo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.crypticminds;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

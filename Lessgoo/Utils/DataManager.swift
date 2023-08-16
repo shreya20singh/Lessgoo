@@ -103,7 +103,66 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    func deleteAccount(completion: @escaping (Result<Void, Error>) -> Void) {
+        guard !currentUserEmail.isEmpty else {
+            completion(.failure(NSError(domain: "No current user email set", code: 0, userInfo: nil)))
+            return
+        }
+        
+        let userRef = db.collection("Users").document(currentUserEmail)
+        
+        userRef.getDocument { userSnapshot, userError in
+            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                completion(.failure(userError ?? NSError(domain: "Unknown error", code: 0, userInfo: nil)))
+                return
+            }
+            
+            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+            
+            // Delete the user's profile document from the Profile collection
+            let profileRef = self.db.collection("Profile").document(profileDocumentId)
+            profileRef.delete { profileError in
+                if let profileError = profileError {
+                    completion(.failure(profileError))
+                    return
+                }
+                
+                // Delete the user's document from the Users collection
+                userRef.delete { userDeleteError in
+                    if let userDeleteError = userDeleteError {
+                        completion(.failure(userDeleteError))
+                        return
+                    }
+                    
+                    // Delete the user's account from Firebase Authentication
+                    Auth.auth().currentUser?.delete { authDeleteError in
+                        if let authDeleteError = authDeleteError {
+                            completion(.failure(authDeleteError))
+                            return
+                        }
+                        
+                        // Clear the currentUserEmail and currentUserProfile properties
+                        self.currentUserEmail = ""
+                        self.currentUserProfile = nil
+                        completion(.success(()))
+                    }
+                }
+            }
+        }
+    }
 
+    func logout(completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            currentUserEmail = ""
+            currentUserProfile = nil
+            completion(.success(()))
+        } catch let signOutError {
+            completion(.failure(signOutError))
+        }
+    }
+    
     func addFeedback(rating: Int, feedbacks: String) {
         let id = UUID().uuidString
         let ref = db.collection("Feedback").document(id)

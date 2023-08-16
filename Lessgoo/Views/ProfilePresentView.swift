@@ -41,11 +41,10 @@ struct ProfilePresentView: View {
                                 .frame(width: 20, height: 20)
                         }
                     }
-                    Text(profile?.joinDate ?? "Join date")
-                        .font(.subheadline)
+                    JoinDateText(dateString: profile?.joinDate ?? "Join date")
                 }
             }
-            Text(profile?.aboutYou ?? "About you")
+            ExpandableText(profile?.aboutYou ?? "About you")
             HStack {
                 Text(profile?.location ?? "Location")
                 Spacer()
@@ -56,12 +55,5 @@ struct ProfilePresentView: View {
                 dataManager.fetchProfile()
             }
         }
-    }
-}
-
-struct ProfilePresentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfilePresentView()
-            .environmentObject(DataManager())
     }
 }

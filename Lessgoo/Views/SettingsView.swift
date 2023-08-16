@@ -53,7 +53,14 @@ struct SettingsView: View {
                 }.offset(y:-10)
                 
                 Button {
-                    exit(0)
+                    dataManager.logout { result in
+                        switch result {
+                        case .success:
+                            print("Successfully logged out")
+                        case .failure(let error):
+                            print("Error logging out: \(error.localizedDescription)")
+                        }
+                    }
                 } label: {
                     Text("Log out")
                         .bold()
@@ -64,6 +71,7 @@ struct SettingsView: View {
                         )
                         .foregroundColor(.black)
                 }.offset(y:20)
+
                 
                 
                 

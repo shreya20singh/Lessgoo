@@ -8,6 +8,7 @@
 import Foundation
 
 struct Destination: Codable{
+    let id: String
     let destinationName: String
     let destinationOwner: String
     let destionationDescription: String

@@ -18,6 +18,10 @@ struct TripEditView: View {
     @State var isPrivate = false
     @StateObject var validationManager = ValidationManager()
     
+    @EnvironmentObject var dataManager: DataManager
+    
+    @Environment(\.presentationMode) var presentationMode
+
     init(trip: Trip?) {
         self.trip = trip
     }
@@ -30,9 +34,7 @@ struct TripEditView: View {
                     TitledTextEditor(title: "Description", text: $description, validationManager: validationManager)
                     TitledTextField(title: "Destinations", text: $destinations, validationManager: validationManager)
                     TitledTextField(title: "Duration(Days)", text: $duration, validationManager: validationManager)
-                    Toggle(isOn: $isPrivate) {
-                        Text("Privacy")
-                    }
+                    LockToggleButton(isLocked: $isPrivate)
                     .onReceive([self.isPrivate].publisher.first()) { (value) in
                         self.privacy = value ? "true" : "false"
                     }
@@ -70,6 +72,7 @@ struct TripEditView: View {
                 print("Error updating trip: \(error)")
             } else {
                 print("Trip successfully updated")
+                presentationMode.wrappedValue.dismiss()
             }
         }
     }

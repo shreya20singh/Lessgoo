@@ -16,4 +16,5 @@ struct User: Identifiable {
     var location: String
     var name: String
     var password: String
+    var profileDocumentId: String
 }

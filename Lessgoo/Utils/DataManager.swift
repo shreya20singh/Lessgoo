@@ -12,6 +12,7 @@ class DataManager: ObservableObject {
     @Published var users: [User] = []
     @Published var currentUserEmail = ""
     @Published var trips: [Trip] = []
+    @Published var currentUserProfile: Profile? = nil
     let db = Firestore.firestore()
     
     
@@ -38,8 +39,9 @@ class DataManager: ObservableObject {
                     let name = data["name"] as? String ?? ""
                     let location = data["location"] as? String ?? ""
                     let password = data["password"] as? String ?? ""
+                    let profileDocumentId = data["profileDocumentId"] as? String ?? ""
                     
-                    let user = User(id: id, email: email, location: location, name: name, password: password)
+                    let user = User(id: id, email: email, location: location, name: name, password: password, profileDocumentId: profileDocumentId)
                     self.users.append(user)
                 }
             }
@@ -50,16 +52,47 @@ class DataManager: ObservableObject {
         self.currentUserEmail = email
     }
     
-    func addUser(email: String, name: String, location: String, passowrd: String) {
+    func addUser(email: String, name: String, location: String, password: String) {
         
         let ref = db.collection("Users").document(email)
-        ref.setData(["email": email, "id" : email, "location":location, "name":name, "passowrd":passowrd]) { error in
+        ref.setData(["email": email, "id" : email, "location":location, "name":name, "passowrd":password]) { error in
             if let error = error {
                 print(error.localizedDescription)
             }
         }
     }
     
+    func addUserWithProfile(email: String, name: String, location: String, password: String) {
+        let profileRef = db.collection("Profile").document()
+        profileRef.setData([
+            "fullName": "",
+            "location": location,
+            "joinDate": Date().description,
+            "photoURL": "",
+            "aboutYou": "",
+            "uploadedPhotoURLs": [String]()
+        ]) { error in
+            if let error = error {
+                print("Error creating profile document: \(error)")
+                return
+            }
+
+            let ref = self.db.collection("Users").document(email)
+            ref.setData([
+                "email": email,
+                "id": email,
+                "location": location,
+                "name": name,
+                "password": password,
+                "profileDocumentId": profileRef.documentID
+            ]) { error in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+
     func addFeedback(rating: Int, feedbacks: String) {
         let id = UUID().uuidString
         let ref = db.collection("Feedback").document(id)
@@ -144,5 +177,122 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    func createTrip(title: String, privacy: String, completion: @escaping (Error?) -> Void) {
+        guard !currentUserEmail.isEmpty else {
+            completion(NSError(domain: "DataManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "No current user email set"]))
+            return
+        }
+        
+        let ref = db.collection("Trip")
+        let id = UUID().uuidString
+        let newTrip = [
+            "id": id,
+            "collaborators": [currentUserEmail],
+            "title": title,
+            "description": "Default Description",
+            "destinations": [String](),
+            "duration": "0",
+            "privacy": privacy
+        ] as [String : Any]
+        
+        ref.document(id).setData(newTrip) { error in
+            completion(error)
+            if let error = error {
+                print("Error adding document: \(error)")
+            } else {
+                print("Document successfully added")
+            }
+        }
+    }
+    
+    func deleteTrip(tripId: String, completion: @escaping (Error?) -> Void) {
+        let ref = db.collection("Trip").document(tripId)
+        ref.delete() { error in
+            completion(error)
+            if let error = error {
+                print("Error removing document: \(error)")
+            } else {
+                self.trips.removeAll(where: { $0.id == tripId })
+                print("Document successfully removed!")
+            }
+        }
+    }
+    
+    func addCollaborator(email: String, toTrip tripId: String, completion: @escaping (Error?) -> Void) {
+        print("addCollaborator addCollaborator tripId \(tripId)")
+        let ref = db.collection("Trip").document(tripId)
+        
+        print("addCollaborator addCollaborator tripId \(tripId)")
 
+        ref.getDocument { (snapshot, error) in
+            if let error = error {
+                print("Error retrieving document: \(error)")
+                completion(error)
+                return
+            }
+
+            guard let snapshot = snapshot, let data = snapshot.data() else {
+                print("Document not found or unable to retrieve data.")
+                completion(NSError(domain: "DataManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Document not found or unable to retrieve data."]))
+                return
+            }
+
+            var collaborators = data["collaborators"] as? [String] ?? []
+            if !collaborators.contains(email) {
+                collaborators.append(email)
+
+                ref.updateData(["collaborators": collaborators]) { error in
+                    if let error = error {
+                        print("Error updating document: \(error)")
+                        completion(error)
+                    } else {
+                        print("Document successfully updated with new collaborator")
+                        completion(nil)
+                    }
+                }
+            } else {
+                print("Collaborator already exists")
+                completion(nil)
+            }
+        }
+    }
+    
+    func fetchProfile() {
+        guard !currentUserEmail.isEmpty else {
+            print("No current user email set")
+            return
+        }
+
+        let userRef = db.collection("Users").document(currentUserEmail)
+
+        userRef.getDocument { userSnapshot, userError in
+            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                print(userError?.localizedDescription ?? "Unknown error")
+                return
+            }
+
+            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+            let profileRef = self.db.collection("Profile").document(profileDocumentId)
+
+            profileRef.getDocument { profileSnapshot, profileError in
+                guard profileError == nil, let profileSnapshot = profileSnapshot, let profileData = profileSnapshot.data() else {
+                    print(profileError?.localizedDescription ?? "Unknown error")
+                    return
+                }
+
+                let profile = Profile(
+                    id: profileSnapshot.documentID,
+                    fullName: profileData["fullName"] as? String ?? "",
+                    location: profileData["location"] as? String ?? "",
+                    joinDate: profileData["joinDate"] as? String ?? "",
+                    photoURL: profileData["photoURL"] as? String ?? "",
+                    aboutYou: profileData["aboutYou"] as? String ?? "",
+                    uploadedPhotoURLs: profileData["uploadedPhotoURLs"] as? [String] ?? []
+                )
+
+                self.currentUserProfile = profile
+            }
+        }
+    }
 }

@@ -121,7 +121,7 @@ struct RegisterView: View {
             if error != nil {
                 print(error!.localizedDescription)
             } else {
-                dataManager.addUser(email: email, name: username, location: location, passowrd: password)
+                dataManager.addUserWithProfile(email: email, name: username, location: location, password: password)
                 userIsLoggedIn.loggedIn = true
                 dataManager.preserveCurrentUserEmail(email: email)
             }

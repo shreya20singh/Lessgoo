@@ -12,18 +12,53 @@ struct HomeView: View {
     @EnvironmentObject var dataManager: DataManager
     
     @State private var searchText = ""
+    @State private var filteredDestinations: [Destination] = []
     @State private var selectedTags: Set<String> = []
     @State private var selectedSortOption: SortOption = .name
     
+    private func performSearch(keyword: String){
+        filteredDestinations = dataManager.destinations.filter{dest in
+            dest.destinationName.contains(keyword)
+        }
+    }
+    
+    private func performSort(sortOption: SortOption){
+       var sortedDestinations = destinations
+        
+        switch sortOption {
+            case .name:
+            sortedDestinations.sort { lhs, rhs in
+                lhs.destinationName < rhs.destinationName
+            }
+        case .favorites:
+            break
+            
+        case .rating:
+            sortedDestinations.sort { lhs, rhs in
+                lhs.averageRating < rhs.averageRating
+            }
+        }
+        
+        if filteredDestinations.isEmpty{
+            dataManager.destinations = sortedDestinations
+        }else{
+            filteredDestinations = sortedDestinations
+        }
+        
+    }
+    
+    private var destinations:[Destination]{
+        filteredDestinations.isEmpty ? dataManager.destinations : filteredDestinations
+    }
     
     var body: some View {
         NavigationView {
             VStack {
                 Spacer()
                 
-                SearchBar(text: $searchText)
-                
-                Spacer()
+//                SearchBar(text: $searchText)
+//                
+//                Spacer()
                 
                 TagFilterView(tags: dataManager.tags, selectedTags: $selectedTags)
                 
@@ -38,10 +73,13 @@ struct HomeView: View {
                     Text("No Destinations found")
                     Text("Please update DB")
                 } else {
-                    List(dataManager.destinations, id: \.id) { destination in
+                    List(destinations, id: \.id) { destination in
                         HomeViewListCellView(destination: destination)
                             .environmentObject(dataManager)
-                    }
+                    }.searchable(text: $searchText)
+                    .onChange(of: selectedSortOption, perform: performSort)
+                    .onChange(of: searchText, perform: performSearch)
+                    
                 }
             }
             .navigationBarTitle("Destinations", displayMode: .large)

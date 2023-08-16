@@ -17,4 +17,5 @@ struct Destination: Codable, Identifiable{
     let ageRecomended: String
     let location: String
     let tags: [String]
+    let averageRating: Double
 }

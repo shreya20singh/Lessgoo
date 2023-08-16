@@ -12,9 +12,8 @@ struct Destination: Codable{
     let destinationName: String
     let destinationOwner: String
     let destionationDescription: String
-    let destinationReviewList: [String]
+    let image: String
     let destinationPrice: String
     let localLanguages: [String]
     let ageRecomended: String
-    let favoriteSpot: String
 }

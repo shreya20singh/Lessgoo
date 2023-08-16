@@ -18,6 +18,7 @@ struct LoginView: View {
     var body: some View {
         if userIsLoggedIn.loggedIn {
             BottomBarView()
+                .environmentObject(dataManager)
             Spacer()
         } else {
             content
@@ -25,7 +26,6 @@ struct LoginView: View {
     }
     
     var content: some View {
-        
         
         NavigationView{
             ZStack {

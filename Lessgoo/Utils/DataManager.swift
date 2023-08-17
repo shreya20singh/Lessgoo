@@ -282,6 +282,23 @@ class DataManager: ObservableObject {
         }
     }
     
+    func updateTrip(tripId: String, title: String, description: String, duration: String, privacy: String, completion: @escaping (Error?) -> Void) {
+        let ref = db.collection("Trip").document(tripId)
+        ref.updateData([
+            "title": title,
+            "description": description,
+            "duration": duration,
+            "privacy": privacy
+        ]) { error in
+            completion(error)
+            if let error = error {
+                print("Error updating document: \(error)")
+            } else {
+                print("Document successfully updated")
+            }
+        }
+    }
+    
     func loadDatabase(fromCSV fileName: String) {
         // Fetch the path of the CSV file in your app bundle
         if let filePath = Bundle.main.path(forResource: fileName, ofType: "csv") {

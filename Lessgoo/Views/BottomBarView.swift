@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BottomBarView: View {
+    @EnvironmentObject var dataManager: DataManager
     var body: some View {
         TabView {
             HomeView()
@@ -16,11 +17,13 @@ struct BottomBarView: View {
                 }
             
             TripPlanningView()
+                .environmentObject(dataManager)
                 .tabItem {
                     Label("Trips", systemImage: "map")
                 }
             
             ProfileView()
+                .environmentObject(dataManager)
                 .tabItem {
                     Label("Profile", systemImage: "person")
                 }
@@ -33,7 +36,3 @@ struct BottomBarView: View {
     }
 }
 
-
-#Preview {
-    BottomBarView()
-}

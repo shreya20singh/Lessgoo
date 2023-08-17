@@ -12,20 +12,62 @@ struct HomeView: View {
     @EnvironmentObject var dataManager: DataManager
     
     @State private var searchText = ""
+    @State private var filteredDestinations: [Destination] = []
     @State private var selectedTags: Set<String> = []
     @State private var selectedSortOption: SortOption = .name
     
+    private func performSearch(keyword: String){
+        filteredDestinations = dataManager.destinations.filter{dest in
+            dest.destinationName.contains(keyword)
+        }
+    }
+    
+    private func performSort(sortOption: SortOption){
+       var sortedDestinations = destinations
+        
+        switch sortOption {
+            case .name:
+            sortedDestinations.sort { lhs, rhs in
+                lhs.destinationName < rhs.destinationName
+            }
+        case .favorites:
+            break
+            
+        case .rating:
+            sortedDestinations.sort { lhs, rhs in
+                lhs.averageRating < rhs.averageRating
+            }
+        }
+        
+        if filteredDestinations.isEmpty{
+            dataManager.destinations = sortedDestinations
+        }else{
+            filteredDestinations = sortedDestinations
+        }
+        
+    }
+    
+    private var destinations: [Destination] {
+        if selectedTags.isEmpty {
+            return filteredDestinations.isEmpty ? dataManager.destinations : filteredDestinations
+        } else {
+            let filteredByTags = dataManager.destinations.filter { destination in
+                let destinationTagsSet = Set(destination.tags)
+                return destinationTagsSet.isSuperset(of: selectedTags)
+            }
+            return filteredDestinations.isEmpty ? filteredByTags : filteredDestinations
+        }
+    }
     
     var body: some View {
         NavigationView {
             VStack {
-                Spacer()
-                
+               
                 SearchBar(text: $searchText)
                 
                 Spacer()
                 
-                TagFilterView(tags: dataManager.tags, selectedTags: $selectedTags)
+                TagFilterView(tags: Array(dataManager.allTags), selectedTags: $selectedTags)
                 
                 Spacer()
                 
@@ -38,15 +80,18 @@ struct HomeView: View {
                     Text("No Destinations found")
                     Text("Please update DB")
                 } else {
-                    List(dataManager.destinations, id: \.id) { destination in
+                    List(destinations, id: \.id) { destination in
                         NavigationLink {
                             DestinationDetailView(destination: destination)
                                 .environmentObject(dataManager)
                         } label: {
                             HomeViewListCellView(destination: destination)
-                                                        .environmentObject(dataManager)
+                            .environmentObject(dataManager)
                         }
-                    }
+                    }//.searchable(text: $searchText)
+                    .onChange(of: selectedSortOption, perform: performSort)
+                    .onChange(of: searchText, perform: performSearch)
+                    
                 }
             }
             .navigationBarTitle("Destinations", displayMode: .large)
@@ -100,20 +145,23 @@ struct TagFilterView: View {
     @Binding var selectedTags: Set<String>
     
     var body: some View {
-        HStack {
-            ForEach(tags, id: \.self) { tag in
-                TagButton(tag: tag, isSelected: selectedTags.contains(tag)) {
-                    if selectedTags.contains(tag) {
-                        selectedTags.remove(tag)
-                    } else {
-                        selectedTags.insert(tag)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(tags, id: \.self) { tag in
+                    TagButton(tag: tag, isSelected: selectedTags.contains(tag)) {
+                        if selectedTags.contains(tag) {
+                            selectedTags.remove(tag)
+                        } else {
+                            selectedTags.insert(tag)
+                        }
                     }
                 }
             }
+            .padding(8)
         }
     }
 }
-
+    
 struct SortOptionsView: View {
     @Binding var selectedSortOption: SortOption
     

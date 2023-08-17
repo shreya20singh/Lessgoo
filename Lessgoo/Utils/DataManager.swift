@@ -18,8 +18,10 @@ class DataManager: ObservableObject {
     @Published var reviewsForDestination: [Review] = []
     @Published var tags: [String] = []
     @Published var selectedTags: Set<String> = []
+    @Published var allTags: Set<String> = []
     @Published var selectedSortOption: SortOption = .name
     @Published var currentUserProfile: Profile? = nil
+    @Published var averageRatingForDestination = 0.0
 
     let db = Firestore.firestore()
     
@@ -102,7 +104,66 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    func deleteAccount(completion: @escaping (Result<Void, Error>) -> Void) {
+        guard !currentUserEmail.isEmpty else {
+            completion(.failure(NSError(domain: "No current user email set", code: 0, userInfo: nil)))
+            return
+        }
+        
+        let userRef = db.collection("Users").document(currentUserEmail)
+        
+        userRef.getDocument { userSnapshot, userError in
+            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                completion(.failure(userError ?? NSError(domain: "Unknown error", code: 0, userInfo: nil)))
+                return
+            }
+            
+            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+            
+            // Delete the user's profile document from the Profile collection
+            let profileRef = self.db.collection("Profile").document(profileDocumentId)
+            profileRef.delete { profileError in
+                if let profileError = profileError {
+                    completion(.failure(profileError))
+                    return
+                }
+                
+                // Delete the user's document from the Users collection
+                userRef.delete { userDeleteError in
+                    if let userDeleteError = userDeleteError {
+                        completion(.failure(userDeleteError))
+                        return
+                    }
+                    
+                    // Delete the user's account from Firebase Authentication
+                    Auth.auth().currentUser?.delete { authDeleteError in
+                        if let authDeleteError = authDeleteError {
+                            completion(.failure(authDeleteError))
+                            return
+                        }
+                        
+                        // Clear the currentUserEmail and currentUserProfile properties
+                        self.currentUserEmail = ""
+                        self.currentUserProfile = nil
+                        completion(.success(()))
+                    }
+                }
+            }
+        }
+    }
 
+    func logout(completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            currentUserEmail = ""
+            currentUserProfile = nil
+            completion(.success(()))
+        } catch let signOutError {
+            completion(.failure(signOutError))
+        }
+    }
+    
     func addFeedback(rating: Int, feedbacks: String) {
         let id = UUID().uuidString
         let ref = db.collection("Feedback").document(id)
@@ -287,12 +348,13 @@ class DataManager: ObservableObject {
         }
     }
     
-    func fetchReviewForDestination(destinationID: String){
-        reviewsForDestination.removeAll()
+    func fetchReviewForDestination(destinationID: String, completion: @escaping ([Review]) -> Void) {
+        var reviews: [Review] = []
         let refReview = self.db.collection("Review")
         refReview.getDocuments { reviewSnapshot, error in
             guard error == nil else {
                 print(error!.localizedDescription)
+                completion(reviews) // Return empty reviews array in case of error
                 return
             }
             
@@ -314,13 +376,24 @@ class DataManager: ObservableObject {
                                             title: title,
                                             reviewDescription: reviewDescription,
                                             timestamp: self.convertTimestampToTimeInterval(timestampString: timestamp))
-                        self.reviewsForDestination.append(review)
+                        reviews.append(review)
                     }
                 }
                 
+                // Calculate average rating
+                let averageRating: Double = {
+                    let totalRating = reviews.reduce(0.0) { $0 + (Double($1.rating) ?? 0.0) }
+                    return reviews.isEmpty ? 0.0 : totalRating / Double(reviews.count)
+                }()
+                
+                // Update the reviewsForDestination array and call the completion handler
+                self.reviewsForDestination = reviews
+                self.averageRatingForDestination = averageRating
+                completion(reviews)
             }
         }
     }
+
 
     func createTrip(title: String, privacy: String, completion: @escaping (Error?) -> Void) {
         guard !currentUserEmail.isEmpty else {
@@ -364,16 +437,242 @@ class DataManager: ObservableObject {
         }
     }
     
-    func fetchDestinations() {
-        destinations.removeAll()
         
-        let ref = db.collection("Destination")
-        ref.getDocuments { snapshot, error in
-            guard error == nil else {
-                print(error!.localizedDescription)
+        func addCollaborator(email: String, toTrip tripId: String, completion: @escaping (Error?) -> Void) {
+            print("addCollaborator addCollaborator tripId \(tripId)")
+            let ref = db.collection("Trip").document(tripId)
+            
+            print("addCollaborator addCollaborator tripId \(tripId)")
+            
+            ref.getDocument { (snapshot, error) in
+                if let error = error {
+                    print("Error retrieving document: \(error)")
+                    completion(error)
+                    return
+                }
+                
+                guard let snapshot = snapshot, let data = snapshot.data() else {
+                    print("Document not found or unable to retrieve data.")
+                    completion(NSError(domain: "DataManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Document not found or unable to retrieve data."]))
+                    return
+                }
+                
+                var collaborators = data["collaborators"] as? [String] ?? []
+                if !collaborators.contains(email) {
+                    collaborators.append(email)
+                    
+                    ref.updateData(["collaborators": collaborators]) { error in
+                        if let error = error {
+                            print("Error updating document: \(error)")
+                            completion(error)
+                        } else {
+                            print("Document successfully updated with new collaborator")
+                            completion(nil)
+                        }
+                    }
+                } else {
+                    print("Collaborator already exists")
+                    completion(nil)
+                }
+            }
+        }
+        
+        func fetchProfile() {
+            guard !currentUserEmail.isEmpty else {
+                print("No current user email set")
                 return
             }
+            
+            let userRef = db.collection("Users").document(currentUserEmail)
+            
+            userRef.getDocument { userSnapshot, userError in
+                guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                    print(userError?.localizedDescription ?? "Unknown error")
+                    return
+                }
+                
+                let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+                let profileRef = self.db.collection("Profile").document(profileDocumentId)
+                
+                profileRef.getDocument { profileSnapshot, profileError in
+                    guard profileError == nil, let profileSnapshot = profileSnapshot, let profileData = profileSnapshot.data() else {
+                        print(profileError?.localizedDescription ?? "Unknown error")
+                        return
+                    }
+                    
+                    let profile = Profile(
+                        id: profileSnapshot.documentID,
+                        fullName: profileData["fullName"] as? String ?? "",
+                        location: profileData["location"] as? String ?? "",
+                        joinDate: profileData["joinDate"] as? String ?? "",
+                        photoURL: profileData["photoURL"] as? String ?? "",
+                        aboutYou: profileData["aboutYou"] as? String ?? "",
+                        uploadedPhotoURLs: profileData["uploadedPhotoURLs"] as? [String] ?? []
+                    )
+                    
+                    self.currentUserProfile = profile
+                }
+            }
+        }
+        
+        func saveProfile(fullName: String, aboutYou: String, location: String, completion: @escaping (Result<Void, Error>) -> Void) {
+            guard !currentUserEmail.isEmpty else {
+                print("No current user email set")
+                completion(.failure(NSError(domain: "Error", code: -1, userInfo: ["description": "No current user email set"])))
+                return
+            }
+            
+            let userRef = db.collection("Users").document(currentUserEmail)
+            
+            userRef.getDocument { userSnapshot, userError in
+                guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                    print(userError?.localizedDescription ?? "Unknown error")
+                    completion(.failure(userError ?? NSError(domain: "Error", code: -1, userInfo: ["description": "Unknown error"])))
+                    return
+                }
+                
+                let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+                let profileRef = self.db.collection("Profile").document(profileDocumentId)
+                
+                let updatedProfileData: [String: Any] = [
+                    "fullName": fullName,
+                    "aboutYou": aboutYou,
+                    "location": location
+                ]
+                
+                profileRef.setData(updatedProfileData, merge: true) { error in
+                    if let error = error {
+                        print("Error saving profile: \(error.localizedDescription)")
+                        completion(.failure(error))
+                    } else {
+                        print("Profile saved successfully")
+                        completion(.success(()))
+                        
+                        // Update the currentUserProfile property
+                        var updatedProfile = self.currentUserProfile ?? Profile(id: profileDocumentId, fullName: "", location: "", joinDate: "", photoURL: "", aboutYou: "", uploadedPhotoURLs: [])
+                        updatedProfile.fullName = fullName
+                        updatedProfile.aboutYou = aboutYou
+                        updatedProfile.location = location
+                        self.currentUserProfile = updatedProfile
+                    }
+                }
+            }
+        }
+        
+        func saveProfile(fullName: String, aboutYou: String, location: String, photoURL: String, completion: @escaping (Result<Void, Error>) -> Void) {
+            guard !currentUserEmail.isEmpty else {
+                print("No current user email set")
+                completion(.failure(NSError(domain: "Error", code: -1, userInfo: ["description": "No current user email set"])))
+                return
+            }
+            
+            let userRef = db.collection("Users").document(currentUserEmail)
+            
+            userRef.getDocument { userSnapshot, userError in
+                guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
+                    print(userError?.localizedDescription ?? "Unknown error")
+                    completion(.failure(userError ?? NSError(domain: "Error", code: -1, userInfo: ["description": "Unknown error"])))
+                    return
+                }
+                
+                let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
+                let profileRef = self.db.collection("Profile").document(profileDocumentId)
+                
+                let updatedProfileData: [String: Any] = [
+                    "fullName": fullName,
+                    "aboutYou": aboutYou,
+                    "location": location,
+                    "photoURL": photoURL
+                ]
+                
+                profileRef.setData(updatedProfileData, merge: true) { error in
+                    if let error = error {
+                        print("Error saving profile: \(error.localizedDescription)")
+                        completion(.failure(error))
+                    } else {
+                        print("Profile saved successfully")
+                        completion(.success(()))
+                        
+                        // Update the currentUserProfile property
+                        var updatedProfile = self.currentUserProfile ?? Profile(id: profileDocumentId, fullName: "", location: "", joinDate: "", photoURL: "", aboutYou: "", uploadedPhotoURLs: [])
+                        updatedProfile.fullName = fullName
+                        updatedProfile.aboutYou = aboutYou
+                        updatedProfile.location = location
+                        updatedProfile.photoURL = photoURL
+                        self.currentUserProfile = updatedProfile
+                    }
+                }
+            }
+        }
+        
+        func uploadProfilePicture(_ image: UIImage, completion: @escaping (Result<String, Error>) -> Void) {
+            guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
+                completion(.failure(NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)))
+                return
+            }
+            
+            let storageRef = Storage.storage().reference()
+            let profilePictureRef = storageRef.child("profilePictures/\(currentUserEmail).jpg")
+            
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpeg"
+            
+            profilePictureRef.putData(data, metadata: metadata) { (metadata, error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+                profilePictureRef.downloadURL { (url, error) in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
+                    
+                    guard let url = url else {
+                        completion(.failure(NSError(domain: "Failed to retrieve download URL", code: 0, userInfo: nil)))
+                        return
+                    }
+                    
+                    completion(.success(url.absoluteString))
+                }
+            }
+        }
+        
+        func uploadProfilePictureAsync(_ image: UIImage) async throws -> String {
+            guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
+                throw NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)
+            }
+            
+            let storageRef = Storage.storage().reference()
+            let profilePictureRef = storageRef.child("profilePictures/\(currentUserEmail).jpg")
+            
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpeg"
+            
+            let _ = try await profilePictureRef.putDataAsync(data, metadata: metadata)
+            
+            let url = try await profilePictureRef.downloadURL()
+            
+            return url.absoluteString
+        }
+    
+    
+    func fetchDestinations() {
+            destinations.removeAll()
+            allTags.removeAll()
+            
+            let ref = db.collection("Destination")
+            ref.getDocuments { snapshot, error in
+                guard error == nil else {
+                    print(error!.localizedDescription)
+                    return
+                }
+                
                 if let snapshot = snapshot {
+                    var fetchedDestinations: [Destination] = []
+                    let dispatchGroup = DispatchGroup()
+                    
                     for document in snapshot.documents {
                         let data = document.data()
                         let id = data["id"] as? String ?? ""
@@ -384,298 +683,116 @@ class DataManager: ObservableObject {
                         let ageRecomended = data["ageReccomendation"] as? String ?? ""
                         let location = data["location"] as? String ?? ""
                         let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
-                        self.fetchReviewForDestination(destinationID: id)
+                        for tag in tags {
+                            self.allTags.insert(tag)
+                        }
+                        dispatchGroup.enter()
+                        
+                        // Fetch reviews and calculate average rating
+                        self.fetchReviewForDestination(destinationID: id) { reviews in
+                            let averageRating: Double = {
+                                let totalRating = reviews.reduce(0.0) { $0 + (Double($1.rating) ?? 0.0) }
+                                return reviews.isEmpty ? 0.0 : totalRating / Double(reviews.count)
+                            }()
+                            
+                            let destination = Destination(id: id,
+                                                          destinationName: destinationName,
+                                                          destinationOwner: destinationOwner,
+                                                          destinationDescription: destinationDescription,
+                                                          image: destImage,
+                                                          reviews: reviews,
+                                                          ageRecomended: ageRecomended,
+                                                          location: location,
+                                                          tags: tags,
+                                                          averageRating: self.averageRatingForDestination // Add average rating here
+                            )
+                            
+                            fetchedDestinations.append(destination)
+                            dispatchGroup.leave()
+                        }
+                    }
+                    
+                    dispatchGroup.notify(queue: .main) {
+                        self.destinations = fetchedDestinations
+                    }
+                }
+            }
+        }
+        
+        func fetchFilteredDestinations(searchText: String, selectedTags: Set<String>, selectedSortOption: SortOption) {
+            destinations.removeAll()
+            reviewsForDestination.removeAll()
+            
+            var query: Query = db.collection("Destination")
+            
+            if !searchText.isEmpty {
+                query = query.whereField("destinationName", isGreaterThanOrEqualTo: searchText)
+            }
+            
+            if !selectedTags.isEmpty {
+                query = query.whereField("tags", arrayContainsAny: Array(selectedTags))
+            }
+            
+            query.getDocuments { snapshot, error in
+                guard error == nil, let snapshot = snapshot else {
+                    print(error?.localizedDescription ?? "Unknown error")
+                    return
+                }
+                
+                var fetchedDestinations: [Destination] = []
+                let dispatchGroup = DispatchGroup()
+                
+                for document in snapshot.documents {
+                    let data = document.data()
+                    let id = data["id"] as? String ?? ""
+                    let destinationName = data["name"] as? String ?? ""
+                    let destImage = data["image"] as? String ?? ""
+                    let destinationOwner = data["owner"] as? String ?? ""
+                    let destinationDescription = data["description"] as? String ?? ""
+                    let ageRecomended = data["ageReccomendation"] as? String ?? ""
+                    let location = data["location"] as? String ?? ""
+                    let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
+                    
+                    dispatchGroup.enter()
+                    
+                    // Fetch reviews and calculate average rating
+                    self.fetchReviewForDestination(destinationID: id) { reviews in
+                        let averageRating: Double = {
+                            let totalRating = reviews.reduce(0.0) { $0 + (Double($1.rating) ?? 0.0) }
+                            return reviews.isEmpty ? 0.0 : totalRating / Double(reviews.count)
+                        }()
+                        
                         let destination = Destination(id: id,
                                                       destinationName: destinationName,
                                                       destinationOwner: destinationOwner,
                                                       destinationDescription: destinationDescription,
                                                       image: destImage,
-                                                      reviews: self.reviewsForDestination,
+                                                      reviews: reviews,
                                                       ageRecomended: ageRecomended,
                                                       location: location,
-                                                      tags: tags
+                                                      tags: tags,
+                                                      averageRating: self.averageRatingForDestination
                         )
-                        self.destinations.append(destination)
+                        
+                        fetchedDestinations.append(destination)
+                        dispatchGroup.leave()
                     }
                 }
-            
-        }
-    }
-    
-    func fetchFilteredDestinations(searchText: String, selectedTags: Set<String>, selectedSortOption: SortOption) {
-        destinations.removeAll()
-        var query = db.collection("Destination")
-        
-        if !searchText.isEmpty {
-            query = query.whereField("destinationName", isGreaterThanOrEqualTo: searchText) as! CollectionReference
-        }
-        
-        if !selectedTags.isEmpty {
-            query = query.whereField("tags", arrayContainsAny: Array(selectedTags)) as! CollectionReference
-        }
-        
-        switch selectedSortOption {
-        case .name:
-            query = query.order(by: "destinationName") as! CollectionReference
-        case .favorites:
-            // Implement sorting by number of favorites
-            break
-        case .rating:
-            query = query.order(by: "averageRating", descending: true) as! CollectionReference
-        }
-        
-        query.getDocuments { snapshot, error in
-            guard error == nil, let snapshot = snapshot else {
-                print(error?.localizedDescription ?? "Unknown error")
-                return
-            }
-            
-            var fetchedDestinations: [Destination] = []
-            for document in snapshot.documents {
-                let data = document.data()
-                let id = data["id"] as? String ?? ""
-                let destinationName = data["name"] as? String ?? ""
-                let destImage = data["image"] as? String ?? ""
-                let destinationOwner = data["owner"] as? String ?? ""
-                let destinationDescription = data["description"] as? String ?? ""
-                let ageRecomended = data["ageReccomendation"] as? String ?? ""
-                let location = data["location"] as? String ?? ""
-                let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
-                self.fetchReviewForDestination(destinationID: id)
-                let destination = Destination(id: id,
-                                              destinationName: destinationName,
-                                              destinationOwner: destinationOwner,
-                                              destinationDescription: destinationDescription,
-                                              image: destImage,
-                                              reviews: self.reviewsForDestination,
-                                              ageRecomended: ageRecomended,
-                                              location: location,
-                                              tags: tags
-                )
-                self.destinations.append(destination)
-            }
-            
-            self.destinations = fetchedDestinations
-        }
-    }
-
-   
-    func addCollaborator(email: String, toTrip tripId: String, completion: @escaping (Error?) -> Void) {
-        print("addCollaborator addCollaborator tripId \(tripId)")
-        let ref = db.collection("Trip").document(tripId)
-        
-        print("addCollaborator addCollaborator tripId \(tripId)")
-
-        ref.getDocument { (snapshot, error) in
-            if let error = error {
-                print("Error retrieving document: \(error)")
-                completion(error)
-                return
-            }
-
-            guard let snapshot = snapshot, let data = snapshot.data() else {
-                print("Document not found or unable to retrieve data.")
-                completion(NSError(domain: "DataManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Document not found or unable to retrieve data."]))
-                return
-            }
-
-            var collaborators = data["collaborators"] as? [String] ?? []
-            if !collaborators.contains(email) {
-                collaborators.append(email)
-
-                ref.updateData(["collaborators": collaborators]) { error in
-                    if let error = error {
-                        print("Error updating document: \(error)")
-                        completion(error)
-                    } else {
-                        print("Document successfully updated with new collaborator")
-                        completion(nil)
+                
+                dispatchGroup.notify(queue: .main) {
+                    // Apply sorting based on selectedSortOption
+                    switch selectedSortOption {
+                    case .name:
+                        fetchedDestinations.sort { $0.destinationName < $1.destinationName }
+                    case .favorites:
+                        // Implement sorting by number of favorites
+                        break
+                    case .rating:
+                        fetchedDestinations.sort { $0.averageRating > $1.averageRating }
                     }
-                }
-            } else {
-                print("Collaborator already exists")
-                completion(nil)
-            }
-        }
-    }
-    
-    func fetchProfile() {
-        guard !currentUserEmail.isEmpty else {
-            print("No current user email set")
-            return
-        }
-
-        let userRef = db.collection("Users").document(currentUserEmail)
-
-        userRef.getDocument { userSnapshot, userError in
-            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
-                print(userError?.localizedDescription ?? "Unknown error")
-                return
-            }
-
-            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
-            let profileRef = self.db.collection("Profile").document(profileDocumentId)
-
-            profileRef.getDocument { profileSnapshot, profileError in
-                guard profileError == nil, let profileSnapshot = profileSnapshot, let profileData = profileSnapshot.data() else {
-                    print(profileError?.localizedDescription ?? "Unknown error")
-                    return
-                }
-
-                let profile = Profile(
-                    id: profileSnapshot.documentID,
-                    fullName: profileData["fullName"] as? String ?? "",
-                    location: profileData["location"] as? String ?? "",
-                    joinDate: profileData["joinDate"] as? String ?? "",
-                    photoURL: profileData["photoURL"] as? String ?? "",
-                    aboutYou: profileData["aboutYou"] as? String ?? "",
-                    uploadedPhotoURLs: profileData["uploadedPhotoURLs"] as? [String] ?? []
-                )
-
-                self.currentUserProfile = profile
-            }
-        }
-    }
-    
-    func saveProfile(fullName: String, aboutYou: String, location: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard !currentUserEmail.isEmpty else {
-            print("No current user email set")
-            completion(.failure(NSError(domain: "Error", code: -1, userInfo: ["description": "No current user email set"])))
-            return
-        }
-        
-        let userRef = db.collection("Users").document(currentUserEmail)
-        
-        userRef.getDocument { userSnapshot, userError in
-            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
-                print(userError?.localizedDescription ?? "Unknown error")
-                completion(.failure(userError ?? NSError(domain: "Error", code: -1, userInfo: ["description": "Unknown error"])))
-                return
-            }
-            
-            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
-            let profileRef = self.db.collection("Profile").document(profileDocumentId)
-            
-            let updatedProfileData: [String: Any] = [
-                "fullName": fullName,
-                "aboutYou": aboutYou,
-                "location": location
-            ]
-            
-            profileRef.setData(updatedProfileData, merge: true) { error in
-                if let error = error {
-                    print("Error saving profile: \(error.localizedDescription)")
-                    completion(.failure(error))
-                } else {
-                    print("Profile saved successfully")
-                    completion(.success(()))
                     
-                    // Update the currentUserProfile property
-                    var updatedProfile = self.currentUserProfile ?? Profile(id: profileDocumentId, fullName: "", location: "", joinDate: "", photoURL: "", aboutYou: "", uploadedPhotoURLs: [])
-                    updatedProfile.fullName = fullName
-                    updatedProfile.aboutYou = aboutYou
-                    updatedProfile.location = location
-                    self.currentUserProfile = updatedProfile
+                    self.destinations = fetchedDestinations
                 }
             }
         }
     }
-    
-    func saveProfile(fullName: String, aboutYou: String, location: String, photoURL: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard !currentUserEmail.isEmpty else {
-            print("No current user email set")
-            completion(.failure(NSError(domain: "Error", code: -1, userInfo: ["description": "No current user email set"])))
-            return
-        }
-        
-        let userRef = db.collection("Users").document(currentUserEmail)
-        
-        userRef.getDocument { userSnapshot, userError in
-            guard userError == nil, let userSnapshot = userSnapshot, let userData = userSnapshot.data() else {
-                print(userError?.localizedDescription ?? "Unknown error")
-                completion(.failure(userError ?? NSError(domain: "Error", code: -1, userInfo: ["description": "Unknown error"])))
-                return
-            }
-            
-            let profileDocumentId = userData["profileDocumentId"] as? String ?? ""
-            let profileRef = self.db.collection("Profile").document(profileDocumentId)
-            
-            let updatedProfileData: [String: Any] = [
-                "fullName": fullName,
-                "aboutYou": aboutYou,
-                "location": location,
-                "photoURL": photoURL
-            ]
-            
-            profileRef.setData(updatedProfileData, merge: true) { error in
-                if let error = error {
-                    print("Error saving profile: \(error.localizedDescription)")
-                    completion(.failure(error))
-                } else {
-                    print("Profile saved successfully")
-                    completion(.success(()))
-                    
-                    // Update the currentUserProfile property
-                    var updatedProfile = self.currentUserProfile ?? Profile(id: profileDocumentId, fullName: "", location: "", joinDate: "", photoURL: "", aboutYou: "", uploadedPhotoURLs: [])
-                    updatedProfile.fullName = fullName
-                    updatedProfile.aboutYou = aboutYou
-                    updatedProfile.location = location
-                    updatedProfile.photoURL = photoURL
-                    self.currentUserProfile = updatedProfile
-                }
-            }
-        }
-    }
-    
-    func uploadProfilePicture(_ image: UIImage, completion: @escaping (Result<String, Error>) -> Void) {
-        guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
-            completion(.failure(NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)))
-            return
-        }
-
-        let storageRef = Storage.storage().reference()
-        let profilePictureRef = storageRef.child("profilePictures/\(currentUserEmail).jpg")
-
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpeg"
-
-        profilePictureRef.putData(data, metadata: metadata) { (metadata, error) in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-
-            profilePictureRef.downloadURL { (url, error) in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-
-                guard let url = url else {
-                    completion(.failure(NSError(domain: "Failed to retrieve download URL", code: 0, userInfo: nil)))
-                    return
-                }
-
-                completion(.success(url.absoluteString))
-            }
-        }
-    }
-
-    func uploadProfilePictureAsync(_ image: UIImage) async throws -> String {
-        guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
-            throw NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)
-        }
-
-        let storageRef = Storage.storage().reference()
-        let profilePictureRef = storageRef.child("profilePictures/\(currentUserEmail).jpg")
-
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpeg"
-
-        let _ = try await profilePictureRef.putDataAsync(data, metadata: metadata)
-
-        let url = try await profilePictureRef.downloadURL()
-
-        return url.absoluteString
-    }
-}

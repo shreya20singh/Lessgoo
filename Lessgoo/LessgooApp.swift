@@ -26,8 +26,13 @@ struct LessgooApp: App {
 }
 
 struct ContentView: View {
+    @EnvironmentObject var dataManager: DataManager
+
     var body: some View {
-        LoginView()
+        if dataManager.currentUserEmail.isEmpty {
+            LoginView().environmentObject(dataManager)
+        } else {
+            BottomBarView().environmentObject(dataManager)
+        }
     }
 }
-

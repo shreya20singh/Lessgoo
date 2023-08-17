@@ -35,7 +35,7 @@ struct HomeView: View {
             
         case .rating:
             sortedDestinations.sort { lhs, rhs in
-                lhs.averageRating < rhs.averageRating
+                lhs.averageRating > rhs.averageRating
             }
         }
         

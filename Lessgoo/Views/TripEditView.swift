@@ -32,7 +32,6 @@ struct TripEditView: View {
                 VStack {
                     TitledTextField(title: "Trip Name", text: $title, validationManager: validationManager)
                     TitledTextEditor(title: "Description", text: $description, validationManager: validationManager)
-                    TitledTextField(title: "Destinations", text: $destinations, validationManager: validationManager)
                     TitledTextField(title: "Duration(Days)", text: $duration, validationManager: validationManager)
                     LockToggleButton(isLocked: $isPrivate)
                     .onReceive([self.isPrivate].publisher.first()) { (value) in
@@ -43,6 +42,7 @@ struct TripEditView: View {
             }
         }
         .navigationTitle("Edit Trip")
+        .navigationBarTitleDisplayMode(.large)
         .navigationBarItems(trailing: Button("Save") {
             saveChanges()
         })

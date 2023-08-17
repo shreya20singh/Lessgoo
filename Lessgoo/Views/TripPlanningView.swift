@@ -28,6 +28,7 @@ struct TripPlanningView: View {
                         }
                     }
                 }
+                .background(Color.clear)
 
             
                 Spacer()

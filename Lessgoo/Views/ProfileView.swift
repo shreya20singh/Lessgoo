@@ -18,6 +18,8 @@ struct ProfileView: View {
                 VStack {
                     ProfilePresentView(profile: dataManager.currentUserProfile).environmentObject(dataManager)
                     Divider().background(Color.gray)
+                    ReviewsViewNew()
+                        .environmentObject(dataManager)
                     Spacer()
                     if showDeleteButton {
                         DeleteAccountButton().environmentObject(dataManager)
@@ -27,6 +29,13 @@ struct ProfileView: View {
                 .background(GeometryReader { geometry in
                     Color.clear.preference(key: ScrollViewOffsetKey.self, value: geometry.frame(in: .named("scrollView")).origin.y)
                 })
+            }
+            .onAppear {
+                Task {
+                    dataManager.fetchReviewForCurrentUser(completion: { reviews in
+                        print("Fetched \(reviews.count) reviews for current user")
+                    })
+                }
             }
             .coordinateSpace(name: "scrollView")
             .onPreferenceChange(ScrollViewOffsetKey.self) { offset in

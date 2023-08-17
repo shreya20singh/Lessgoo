@@ -47,20 +47,27 @@ struct HomeView: View {
         
     }
     
-    private var destinations:[Destination]{
-        filteredDestinations.isEmpty ? dataManager.destinations : filteredDestinations
+    private var destinations: [Destination] {
+        if selectedTags.isEmpty {
+            return filteredDestinations.isEmpty ? dataManager.destinations : filteredDestinations
+        } else {
+            let filteredByTags = dataManager.destinations.filter { destination in
+                let destinationTagsSet = Set(destination.tags)
+                return destinationTagsSet.isSuperset(of: selectedTags)
+            }
+            return filteredDestinations.isEmpty ? filteredByTags : filteredDestinations
+        }
     }
     
     var body: some View {
         NavigationView {
             VStack {
+               
+                SearchBar(text: $searchText)
+                
                 Spacer()
                 
-//                SearchBar(text: $searchText)
-//                
-//                Spacer()
-                
-                TagFilterView(tags: dataManager.tags, selectedTags: $selectedTags)
+                TagFilterView(tags: Array(dataManager.allTags), selectedTags: $selectedTags)
                 
                 Spacer()
                 
@@ -76,7 +83,7 @@ struct HomeView: View {
                     List(destinations, id: \.id) { destination in
                         HomeViewListCellView(destination: destination)
                             .environmentObject(dataManager)
-                    }.searchable(text: $searchText)
+                    }//.searchable(text: $searchText)
                     .onChange(of: selectedSortOption, perform: performSort)
                     .onChange(of: searchText, perform: performSearch)
                     
@@ -133,20 +140,23 @@ struct TagFilterView: View {
     @Binding var selectedTags: Set<String>
     
     var body: some View {
-        HStack {
-            ForEach(tags, id: \.self) { tag in
-                TagButton(tag: tag, isSelected: selectedTags.contains(tag)) {
-                    if selectedTags.contains(tag) {
-                        selectedTags.remove(tag)
-                    } else {
-                        selectedTags.insert(tag)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(tags, id: \.self) { tag in
+                    TagButton(tag: tag, isSelected: selectedTags.contains(tag)) {
+                        if selectedTags.contains(tag) {
+                            selectedTags.remove(tag)
+                        } else {
+                            selectedTags.insert(tag)
+                        }
                     }
                 }
             }
+            .padding(8)
         }
     }
 }
-
+    
 struct SortOptionsView: View {
     @Binding var selectedSortOption: SortOption
     

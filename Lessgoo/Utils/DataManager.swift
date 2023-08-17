@@ -18,6 +18,7 @@ class DataManager: ObservableObject {
     @Published var reviewsForDestination: [Review] = []
     @Published var tags: [String] = []
     @Published var selectedTags: Set<String> = []
+    @Published var allTags: Set<String> = []
     @Published var selectedSortOption: SortOption = .name
     @Published var currentUserProfile: Profile? = nil
     @Published var averageRatingForDestination = 0.0
@@ -623,6 +624,7 @@ class DataManager: ObservableObject {
     
     func fetchDestinations() {
             destinations.removeAll()
+            allTags.removeAll()
             
             let ref = db.collection("Destination")
             ref.getDocuments { snapshot, error in
@@ -645,7 +647,9 @@ class DataManager: ObservableObject {
                         let ageRecomended = data["ageReccomendation"] as? String ?? ""
                         let location = data["location"] as? String ?? ""
                         let tags = (data["tags"] as? String ?? "").split(separator: ", ").map { String($0) }
-                        
+                        for tag in tags {
+                            self.allTags.insert(tag)
+                        }
                         dispatchGroup.enter()
                         
                         // Fetch reviews and calculate average rating

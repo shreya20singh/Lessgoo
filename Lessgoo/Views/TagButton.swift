@@ -17,12 +17,13 @@ struct TagButton: View {
         }) {
             Text(tag)
                 .font(.caption)
-                .padding(.horizontal, 12)
                 .padding(.vertical, 6)
+                .padding(.horizontal, 12)
                 .background(isSelected ? Color.blue : Color.gray.opacity(0.5))
                 .foregroundColor(.white)
                 .cornerRadius(10)
         }
+        .frame(minWidth: 0, maxWidth: .infinity)
     }
 }
 

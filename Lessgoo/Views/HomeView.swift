@@ -39,8 +39,13 @@ struct HomeView: View {
                     Text("Please update DB")
                 } else {
                     List(dataManager.destinations, id: \.id) { destination in
-                        HomeViewListCellView(destination: destination)
-                            .environmentObject(dataManager)
+                        NavigationLink {
+                            DestinationDetailView(destination: destination)
+                                .environmentObject(dataManager)
+                        } label: {
+                            HomeViewListCellView(destination: destination)
+                                                        .environmentObject(dataManager)
+                        }
                     }
                 }
             }

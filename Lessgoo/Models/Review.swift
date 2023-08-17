@@ -9,8 +9,9 @@ import Foundation
 
 struct Review: Codable, Identifiable{
     let id: String
+    let authorId: String
     let destinationId: String
-    let rating: String
+    let rating: Double
     let title: String
     let reviewDescription: String
     let timestamp: TimeInterval

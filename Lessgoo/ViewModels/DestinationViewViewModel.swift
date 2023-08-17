@@ -13,10 +13,12 @@ class DestinationViewViewModel: ObservableObject {
     @Published var selectedTripIndex = -1
     {
         didSet {
-//            print("set index \(selectedTripIndex)")
-            if trips.indices.contains(selectedTripIndex) {
-                trips[selectedTripIndex].destinations.append(destination.id)
+            guard trips.indices.contains(selectedTripIndex) else {
+                return
             }
+            trips[selectedTripIndex].destinations.append(destination.id)
+            let tripId = trips[selectedTripIndex].id
+            dataManager?.addDestinationToTrip(tripId: tripId, destinationId: destination.id)
         }
     }
     @Published var reviews: [Review] = [] {
@@ -33,7 +35,15 @@ class DestinationViewViewModel: ObservableObject {
     @Published var avgRating = 0.0
     @Published var showReviews = false
     @Published var ownReview: Review? = nil
+//    {
+//        didSet {
+//            print("ownReview Set")
+//            print("title: \(ownReview?.title ?? "")")
+//        }
+//    }
     @Published var editingReview = false
+    
+    var dataManager: DataManager? = nil
     
     var trips: [Trip] = []
     var userId = ""

@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct ReviewsView: View {
-    @State var showDestinations = false
-    @State var reviews: [Review]
+    var showDestinations = false
+    var reviews: [Review]
+    
+//    init(showDestinations: Bool = false, reviews: [Review]) {
+//        self.showDestinations = showDestinations
+//        self.reviews = reviews
+//        print("Reviews View init")
+//        print(reviews)
+//    }
     
     var body: some View {
         LazyVStack {

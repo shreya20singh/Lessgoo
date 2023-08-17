@@ -22,6 +22,7 @@ class DataManager: ObservableObject {
     @Published var selectedSortOption: SortOption = .name
     @Published var currentUserProfile: Profile? = nil
     @Published var averageRatingForDestination = 0.0
+    @Published var currentTripDestinations: [Destination] = []
 
     let db = Firestore.firestore()
     
@@ -30,6 +31,36 @@ class DataManager: ObservableObject {
         fetchUsers()
         fetchDestinations()
         // You can get all information you need here by calling certain queries.
+    }
+    
+    func fetchCurrentTripDestinations(trip: Trip?) {
+        self.currentTripDestinations = trip?.destinations.compactMap { destinationId in
+            self.destinations.first { $0.id == destinationId }
+        } ?? []
+    }
+    
+    func updateCurrentTripDestinations(trip: Trip?) {
+        guard let trip = trip else { return }
+        
+        // Update the trip object with the latest currentTripDestinations
+        var updatedTrip = trip
+        updatedTrip.destinations = currentTripDestinations.map { $0.id }
+
+        
+        // Update the trip in Firestore
+        db.collection("Trip").document(trip.id).setData([
+            "title": updatedTrip.title,
+            "description": updatedTrip.description,
+            "destinations": updatedTrip.destinations,
+            "duration": updatedTrip.duration,
+            "privacy": updatedTrip.privacy
+        ], merge: true) { error in
+            if let error = error {
+                print("Error updating trip: \(error)")
+            } else {
+                print("Trip successfully updated")
+            }
+        }
     }
     
     func fetchUsers() {
@@ -175,6 +206,7 @@ class DataManager: ObservableObject {
     }
     
     func fetchTrips() {
+        print("fetchTripsfetchTripsfetchTripsfetchTripsfetchTrips")
         guard currentUserEmail.count > 0 else {
             return
         }

@@ -31,6 +31,7 @@ struct TripPresentView: View {
                     Spacer()
                     
                     HStack {
+                        //                  
                         Text("Duration: \(formattedDuration(trip?.duration))")
                             .font(.title)
                             .foregroundColor(.primary)

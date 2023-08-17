@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TripAddCollaboratorView: View {
-    var trip: Trip
+    @Binding var trip: Trip
     
     @State private var collaboratorEmail = ""
     @StateObject var validationManager = ValidationManager()
@@ -44,6 +44,8 @@ struct TripAddCollaboratorView: View {
                             presentationMode.wrappedValue.dismiss()
                         }
                     }
+                    trip.collaborators.append(collaboratorEmail)
+                    dataManager.fetchTrips()
                 })
                 .padding()
             }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CollaboratorsButton: View {
-    var trip: Trip
+    @State var trip: Trip
     @State private var showAddCollaboratorView = false
     
     var body: some View {
@@ -21,9 +21,12 @@ struct CollaboratorsButton: View {
                     .font(.headline)
             }
             .padding()
+//            .background(Color.white)
+//            .foregroundColor(Color.blue)
+//            .cornerRadius(8)
         }
         .sheet(isPresented: $showAddCollaboratorView) {
-            TripAddCollaboratorView(trip: trip)
+            TripAddCollaboratorView(trip: $trip)
                 .presentationDetents([.fraction(0.4)])
         }
     }

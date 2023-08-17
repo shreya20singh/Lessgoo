@@ -26,7 +26,7 @@ struct HomeViewListCellView: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            destinationImage
+            Image(destination?.image ??  "photo")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 100, height: 100) // Adjust to your needs

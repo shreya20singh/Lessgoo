@@ -22,6 +22,8 @@ class DataManager: ObservableObject {
     @Published var selectedSortOption: SortOption = .name
     @Published var currentUserProfile: Profile? = nil
     @Published var averageRatingForDestination = 0.0
+    @Published var currentTripDestinations: [Destination] = []
+    @Published var currentUserReviews: [Review] = []
 
     let db = Firestore.firestore()
     
@@ -30,6 +32,36 @@ class DataManager: ObservableObject {
         fetchUsers()
         fetchDestinations()
         // You can get all information you need here by calling certain queries.
+    }
+    
+    func fetchCurrentTripDestinations(trip: Trip?) {
+        self.currentTripDestinations = trip?.destinations.compactMap { destinationId in
+            self.destinations.first { $0.id == destinationId }
+        } ?? []
+    }
+    
+    func updateCurrentTripDestinations(trip: Trip?) {
+        guard let trip = trip else { return }
+        
+        // Update the trip object with the latest currentTripDestinations
+        var updatedTrip = trip
+        updatedTrip.destinations = currentTripDestinations.map { $0.id }
+
+        
+        // Update the trip in Firestore
+        db.collection("Trip").document(trip.id).setData([
+            "title": updatedTrip.title,
+            "description": updatedTrip.description,
+            "destinations": updatedTrip.destinations,
+            "duration": updatedTrip.duration,
+            "privacy": updatedTrip.privacy
+        ], merge: true) { error in
+            if let error = error {
+                print("Error updating trip: \(error)")
+            } else {
+                print("Trip successfully updated")
+            }
+        }
     }
     
     func fetchUsers() {
@@ -175,6 +207,7 @@ class DataManager: ObservableObject {
     }
     
     func fetchTrips() {
+        print("fetchTripsfetchTripsfetchTripsfetchTripsfetchTrips")
         guard currentUserEmail.count > 0 else {
             return
         }
@@ -333,6 +366,7 @@ class DataManager: ObservableObject {
     }
     
     func updateReview(reviewId: String, rating: Double, title: String, description: String) {
+        print("---------------updateReview reviewId\(reviewId)----------")
         let doc = self.db.collection("Review").document(reviewId)
         
         doc.updateData([
@@ -347,6 +381,23 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    func deleteReview(reviewId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        print("---------------deleteReview reviewId \(reviewId)----------")
+        let doc = self.db.collection("Review").document(reviewId)
+        
+        doc.delete() { error in
+            if let error = error {
+                print("---Delete Review Error---")
+                print(error.localizedDescription)
+                completion(.failure(error))
+            } else {
+                print("---Review Deleted Successfully---")
+                completion(.success(()))
+            }
+        }
+    }
+
     
     func fetchReviewForDestination(destinationID: String, completion: @escaping ([Review]) -> Void) {
         var reviews: [Review] = []
@@ -393,6 +444,52 @@ class DataManager: ObservableObject {
             }
         }
     }
+    
+    func fetchReviewForCurrentUser(completion: @escaping ([Review]) -> Void) {
+        print("fetchReviewForCurrentUserfetchReviewForCurrentUser")
+        print("fetchReviewForCurrentUserfetchReviewForCurrentUser")
+        
+        var reviews: [Review] = []
+        let refReview = self.db.collection("Review")
+        refReview.getDocuments { reviewSnapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                completion(reviews) // Return empty reviews array in case of error
+                return
+            }
+
+            if let snapshotReview = reviewSnapshot {
+                for document in snapshotReview.documents {
+                    let data = document.data()
+                    let documentId = document.documentID
+                    let authorEmail = data["authorId"] as? String ?? ""
+                    if (authorEmail == self.currentUserEmail) {
+                        let reviewid = documentId
+                        let authorId = data["authorId"] as? String ?? ""
+                        let destinationId = data["destinationId"] as? String ?? ""
+                        let rating = data["rating"] as? Double ?? 0.0
+                        let reviewDescription = data["reviewDescription"] as? String ?? ""
+                        let timestamp = data["timestamp"] as? String ?? ""
+                        let title = data["title"] as? String ?? ""
+                        let review = Review(id: reviewid,
+                                            authorId: authorId,
+                                            destinationId: destinationId,
+                                            rating: rating,
+                                            title: title,
+                                            reviewDescription: reviewDescription,
+                                            timestamp: self.convertTimestampToTimeInterval(timestampString: timestamp))
+                        reviews.append(review)
+                    }
+                }
+                print("------------fetchReviewForCurrentUser-------------\(reviews)")
+                self.currentUserReviews = reviews
+                completion(reviews)
+            }
+        }
+        print("------------fetchReviewForCurrentUser-------------\(self.currentUserReviews)")
+        print("------------fetchReviewForCurrentUser-------------End")
+    }
+
 
 
     func createTrip(title: String, privacy: String, completion: @escaping (Error?) -> Void) {
@@ -793,6 +890,22 @@ class DataManager: ObservableObject {
                     
                     self.destinations = fetchedDestinations
                 }
+            }
+        }
+        func getDestinationName(by destinationId: String, completion: @escaping (String?) -> Void) {
+            print("----------getDestinationName getDestinationName \(destinationId)---------")
+            let destinationRef = db.collection("Destination")
+            let destinationDocument = destinationRef.document(destinationId)
+            
+            destinationDocument.getDocument { (document, error) in
+                guard let document = document, document.exists, error == nil else {
+                    print(error?.localizedDescription ?? "Failed to fetch destination name")
+                    completion(nil)
+                    return
+                }
+                
+                let destinationName = document.data()?["name"] as? String
+                completion(destinationName)
             }
         }
     }

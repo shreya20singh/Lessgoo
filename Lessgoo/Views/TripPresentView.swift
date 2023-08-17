@@ -9,97 +9,130 @@ import SwiftUI
 
 struct TripPresentView: View {
     @State var tripNameSub: String = ""
+    @State private var showingSheet = false
     var tripImage: Image = Image(systemName: "photo") // Using system icon as placeholder
     
     @State var trip: Trip?
     @EnvironmentObject var dataManager: DataManager
     @Environment(\.presentationMode) var presentationMode
-    
+        
     @State private var showAlert = false
+    @State private var isCellTapped = false
     var body: some View {
-        ScrollView{
-            VStack(alignment: .leading, spacing: 5) {
-                tripImage
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: UIScreen.main.bounds.width, height: 120)
-                    .clipped()
-                
-                Spacer()
-                
-                HStack {
-                    Text(trip?.title ?? "Default Trip")
-                        .font(.title)
-                        .foregroundColor(.primary)
+        ZStack {
+            ScrollView{
+                VStack(alignment: .leading, spacing: 5) {
+                    tripImage
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: UIScreen.main.bounds.width, height: 180)
+                        .clipped()
+                    
                     Spacer()
-                    if trip?.privacy == "true" {
-                        Image(systemName: "lock.fill")
-                            .foregroundColor(.blue)
-                        Text("Private")
-                            .font(.body)
-                            .foregroundColor(.blue)
-                    } else {
-                        Image(systemName: "lock.open.fill")
-                            .foregroundColor(.green)
-                        Text("Public")
-                            .font(.body)
-                            .foregroundColor(.green)
+                    
+                    HStack {
+                        //                  
+                        Text("Duration: \(formattedDuration(trip?.duration))")
+                            .font(.title)
+                            .foregroundColor(.primary)
+                        Spacer()
+                        if trip?.privacy == "true" {
+                            Image(systemName: "lock.fill")
+                                .foregroundColor(.blue)
+                            Text("Private")
+                                .font(.body)
+                                .foregroundColor(.blue)
+                        } else {
+                            Image(systemName: "lock.open.fill")
+                                .foregroundColor(.green)
+                            Text("Public")
+                                .font(.body)
+                                .foregroundColor(.green)
+                        }
+                    }
+                    .padding()
+                    
+                    Spacer()
+                    
+                    Text(tripNameSub)
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                        .padding()
+                    
+                    Spacer()
+                    
+                    ExpandableText("\(trip?.description ?? "No Description")")
+                        .padding()
+                    
+                    ForEach(dataManager.currentTripDestinations) { destination in
+                        HomeViewListCellView(destinationImage: Image(systemName: "photo"), destination: destination, isTapped: $isCellTapped)
+                            .environmentObject(dataManager)
+                            .padding()
                     }
                 }
-                
-                Spacer()
-                
-                Text(tripNameSub)
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
-                ExpandableText("Description: \(trip?.description ?? "No Description")")                
-                
-                Text("Destinations: \(trip?.destinations.joined(separator: ", ") ?? "No Destinations")")
-                    .font(.body)
-                    .foregroundColor(.primary)
-                
-                Text("Duration: \(formattedDuration(trip?.duration))")
-                    .font(.body)
-                    .foregroundColor(.primary)
-                
+                .padding()
             }
-            .padding(10)
-        }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("Are you sure you want to delete this trip?"),
-                message: Text("This action cannot be undone."),
-                primaryButton: .destructive(Text("Delete")) {
-                    deleteTrip()
-                },
-                secondaryButton: .cancel()
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Are you sure you want to delete this trip?"),
+                    message: Text("This action cannot be undone."),
+                    primaryButton: .destructive(Text("Delete")) {
+                        deleteTrip()
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
+            .navigationBarTitle(trip?.title ?? "Default Trip", displayMode: .large)
+            .navigationBarItems(
+                trailing: HStack {
+                    CollaboratorsButton(trip: trip!)
+                    Button(action: {
+                        showAlert.toggle()
+                    }) {
+                        Image(systemName: "trash")
+                    }
+                    
+                    NavigationLink(destination: TripEditView(trip: trip).environmentObject(dataManager)) {
+                        Image(systemName: "pencil")
+                    }
+                }
             )
-        }
-        .navigationBarTitle(trip?.title ?? "Default Trip", displayMode: .large)
-        .navigationBarItems(
-            trailing: HStack {
-                CollaboratorsButton(trip: trip!)
-                Button(action: {
-                    showAlert.toggle()
-                }) {
-                    Image(systemName: "trash")
-                }
-                
-                NavigationLink(destination: TripEditView(trip: trip).environmentObject(dataManager)) {
-                    Image(systemName: "pencil")
+            .onAppear {
+                dataManager.fetchCurrentTripDestinations(trip: trip)
+                self.tripNameSub = getSubTitle()
+                if let tripId = trip?.id {
+                    dataManager.fetchTrip(byId: tripId) { fetchedTrip in
+                        if let fetchedTrip = fetchedTrip {
+                            self.trip = fetchedTrip
+                        }
+                    }
                 }
             }
-        )
-        .onAppear {
-            self.tripNameSub = getSubTitle()
-            if let tripId = trip?.id {
-                dataManager.fetchTrip(byId: tripId) { fetchedTrip in
-                    if let fetchedTrip = fetchedTrip {
-                        self.trip = fetchedTrip
+            
+            // Floating button
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        showingSheet.toggle()
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                            .foregroundColor(.blue)
+                            .padding()
                     }
+                    .sheet(isPresented: $showingSheet, onDismiss: {
+                        Task {
+                            dataManager.updateCurrentTripDestinations(trip: trip)
+                            dataManager.fetchTrips()
+                        }
+                    }, content: {
+                        DestinationSearchView(trip: trip)
+                            .environmentObject(dataManager)
+                    })
+                    .padding()
                 }
             }
         }

@@ -81,8 +81,13 @@ struct HomeView: View {
                     Text("Please update DB")
                 } else {
                     List(destinations, id: \.id) { destination in
-                        HomeViewListCellView(destination: destination)
+                        NavigationLink {
+                            DestinationDetailView(destination: destination)
+                                .environmentObject(dataManager)
+                        } label: {
+                            HomeViewListCellView(destination: destination)
                             .environmentObject(dataManager)
+                        }
                     }//.searchable(text: $searchText)
                     .onChange(of: selectedSortOption, perform: performSort)
                     .onChange(of: searchText, perform: performSearch)

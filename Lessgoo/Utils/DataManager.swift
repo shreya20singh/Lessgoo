@@ -301,7 +301,9 @@ class DataManager: ObservableObject {
         }
     }
     
-
+    func convertTimeIntervalToTimeStamp(interval: TimeInterval) -> String {
+        return Date(timeIntervalSince1970: interval).ISO8601Format()
+    }
     
     func convertTimestampToTimeInterval(timestampString: String) -> TimeInterval {
             let dateFormatter = ISO8601DateFormatter()
@@ -313,6 +315,38 @@ class DataManager: ObservableObject {
                 return 0 // Return a default value or handle error as needed
             }
         }
+    
+    func submitReview(destinationId: String, rating: Double, title: String, description: String) {
+        guard !currentUserEmail.isEmpty else {
+            print("Review Submission Failed: no author")
+            return
+        }
+        let collection = self.db.collection("Review")
+        collection.addDocument(data: [
+            "destinationId": destinationId,
+            "authorId": currentUserEmail,
+            "rating": rating,
+            "reviewDescription": description,
+            "timestamp": Date().ISO8601Format(),
+            "title": title
+        ])
+    }
+    
+    func updateReview(reviewId: String, rating: Double, title: String, description: String) {
+        let doc = self.db.collection("Review").document(reviewId)
+        
+        doc.updateData([
+            "rating": rating,
+            "reviewDescription": description,
+            "timestamp": Date().ISO8601Format(),
+            "title": title
+        ]) { (error) in
+            if let error {
+                print("---Update Review Error---")
+                print(error.localizedDescription)
+            }
+        }
+    }
     
     func fetchReviewForDestination(destinationID: String, completion: @escaping ([Review]) -> Void) {
         var reviews: [Review] = []
@@ -330,11 +364,13 @@ class DataManager: ObservableObject {
                     let destinationId = data["destinationId"] as? String ?? ""
                     if(destinationId == destinationID){
                         let reviewid = data["id"] as? String ?? ""
-                        let rating = data["rating"] as? String ?? ""
+                        let authorId = data["authorId"] as? String ?? ""
+                        let rating = data["rating"] as? Double ?? 0.0
                         let reviewDescription = data["reviewDescription"] as? String ?? ""
                         let timestamp = data["timestamp"] as? String ?? ""
                         let title = data["title"] as? String ?? ""
                         let review = Review(id: reviewid,
+                                            authorId: authorId,
                                             destinationId: destinationId,
                                             rating: rating,
                                             title: title,

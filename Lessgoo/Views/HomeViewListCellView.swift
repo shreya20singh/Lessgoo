@@ -15,7 +15,7 @@ struct HomeViewListCellView: View {
     
     var averageRating: Double {
         if let reviews = destination?.reviews, !reviews.isEmpty {
-            let totalRating = reviews.reduce(0.0) { $0 + (Double($1.rating) ?? 0.0) }
+            let totalRating = reviews.reduce(0.0) { $0 + $1.rating }
             return totalRating / Double(reviews.count)
         } else {
             return 0.0

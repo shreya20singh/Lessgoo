@@ -12,7 +12,7 @@ struct TripPresentView: View {
     @State private var showingSheet = false
     var tripImage: Image = Image(systemName: "photo") // Using system icon as placeholder
     
-    @State var trip: Trip?
+    @State var trip: Trip
     @EnvironmentObject var dataManager: DataManager
     @Environment(\.presentationMode) var presentationMode
         
@@ -32,11 +32,11 @@ struct TripPresentView: View {
                     
                     HStack {
                         //                  
-                        Text("Duration: \(formattedDuration(trip?.duration))")
+                        Text("Duration: \(formattedDuration(trip.duration))")
                             .font(.title)
                             .foregroundColor(.primary)
                         Spacer()
-                        if trip?.privacy == "true" {
+                        if trip.privacy == "true" {
                             Image(systemName: "lock.fill")
                                 .foregroundColor(.blue)
                             Text("Private")
@@ -61,7 +61,7 @@ struct TripPresentView: View {
                     
                     Spacer()
                     
-                    ExpandableText("\(trip?.description ?? "No Description")")
+                    ExpandableText("\(trip.description ?? "No Description")")
                         .padding()
                     
                     ForEach(dataManager.currentTripDestinations) { destination in
@@ -82,17 +82,17 @@ struct TripPresentView: View {
                     secondaryButton: .cancel()
                 )
             }
-            .navigationBarTitle(trip?.title ?? "Default Trip", displayMode: .large)
+            .navigationBarTitle(trip.title ?? "Default Trip", displayMode: .large)
             .navigationBarItems(
                 trailing: HStack {
-                    CollaboratorsButton(trip: trip!)
+                    CollaboratorsButton(trip: trip)
                     Button(action: {
                         showAlert.toggle()
                     }) {
                         Image(systemName: "trash")
                     }
                     
-                    NavigationLink(destination: TripEditView(trip: trip).environmentObject(dataManager)) {
+                    NavigationLink(destination: TripEditView(trip: $trip).environmentObject(dataManager)) {
                         Image(systemName: "pencil")
                     }
                 }
@@ -100,13 +100,13 @@ struct TripPresentView: View {
             .onAppear {
                 dataManager.fetchCurrentTripDestinations(trip: trip)
                 self.tripNameSub = getSubTitle()
-                if let tripId = trip?.id {
-                    dataManager.fetchTrip(byId: tripId) { fetchedTrip in
+//                if let tripId = trip.id {
+                    dataManager.fetchTrip(byId: trip.id) { fetchedTrip in
                         if let fetchedTrip = fetchedTrip {
                             self.trip = fetchedTrip
                         }
                     }
-                }
+//                }
             }
             
             // Floating button
@@ -150,11 +150,11 @@ struct TripPresentView: View {
     }
     
     func deleteTrip() {
-        guard let tripId = trip?.id else {
-            return
-        }
+//        guard let tripId = trip.id else {
+//            return
+//        }
 
-        dataManager.deleteTrip(tripId: tripId) { error in
+        dataManager.deleteTrip(tripId: trip.id) { error in
             if let error = error {
                 print("Error deleting trip: \(error)")
             } else {
@@ -166,8 +166,8 @@ struct TripPresentView: View {
 
 }
 
-struct TripPresentView_Previews: PreviewProvider {
-    static var previews: some View {
-        TripPresentView()
-    }
-}
+//struct TripPresentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TripPresentView()
+//    }
+//}

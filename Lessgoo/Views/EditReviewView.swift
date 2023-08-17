@@ -59,6 +59,10 @@ struct EditReviewView: View {
                             title: viewModel.titleText,
                             description: viewModel.descriptionText
                         )
+                        dataManager.fetchReviewForCurrentUser(completion: {
+                            reviews in
+                            print("-----EditReviewView fetched \(reviews.count) reviews after updateReview")
+                        })
                     }
                     
                     dismiss()
@@ -67,6 +71,41 @@ struct EditReviewView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                
+                if let reviewId = viewModel.originalReview?.id {
+                    if !reviewId.isEmpty {
+                        Button {
+                            if let reviewId = viewModel.originalReview?.id {
+                                dataManager.deleteReview(reviewId: reviewId) { result in
+                                    switch result {
+                                    case .success:
+                                        print("Review deleted successfully")
+                                        // Update your UI or data source if needed
+                                    case .failure(let error):
+                                        print("Error deleting review: \(error.localizedDescription)")
+                                        // Handle the error, for example by showing an alert to the user
+                                    }
+                                }
+                                
+                                dataManager.fetchReviewForCurrentUser(completion: {
+                                    reviews in
+                                    print("-----EditReviewView fetched \(reviews.count) reviews after updateReview")
+                                })
+                            }
+                            
+                            dismiss()
+                        } label: {
+                            Text("Delete")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(Color.red)
+                                .cornerRadius(8)
+                        }
+                        
+                        
+                    }
+                }
             }
         }
         .padding()

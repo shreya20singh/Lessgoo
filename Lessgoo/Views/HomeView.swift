@@ -16,6 +16,8 @@ struct HomeView: View {
     @State private var selectedTags: Set<String> = []
     @State private var selectedSortOption: SortOption = .name
     
+    @State var isCellTapped: Bool = false
+    
     private func performSearch(keyword: String){
         filteredDestinations = dataManager.destinations.filter{dest in
             dest.destinationName.contains(keyword)
@@ -85,7 +87,7 @@ struct HomeView: View {
                             DestinationDetailView(destination: destination)
                                 .environmentObject(dataManager)
                         } label: {
-                            HomeViewListCellView(destination: destination)
+                            HomeViewListCellView(destination: destination, isTapped: $isCellTapped)
                             .environmentObject(dataManager)
                         }
                     }//.searchable(text: $searchText)

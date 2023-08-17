@@ -12,6 +12,8 @@ struct HomeViewListCellView: View {
     var destinationImage: Image = Image(systemName: "photo") // Using system icon as placeholder
     var destination: Destination?
     @EnvironmentObject var dataManager: DataManager
+    @Binding var isTapped: Bool
+    var isTappable: Bool = false
     
     var averageRating: Double {
         if let reviews = destination?.reviews, !reviews.isEmpty {
@@ -49,9 +51,14 @@ struct HomeViewListCellView: View {
             }
         }
         .padding(10)
-        .background()
+        .background(isTapped ? Color.blue.opacity(0.2) : Color.white)
         .cornerRadius(8)
         .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .onTapGesture {
+            if isTappable {
+                isTapped.toggle()
+            }
+        }
     }
 }
 

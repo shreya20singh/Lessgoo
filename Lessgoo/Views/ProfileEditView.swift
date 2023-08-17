@@ -30,7 +30,7 @@ struct ProfileEditView: View {
             ScrollView{
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(alignment: .center, spacing: 10) {
-                        // Assuming you have a way to upload a new profile photo and get the URL
+
                         if let image = selectedImage {
                             Image(uiImage: image)
                                 .resizable()

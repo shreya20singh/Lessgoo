@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct RatingsView: View {
-    @State var rating: Double
-    @State var showNumber = true
+    var rating: Double
+    var showNumber = true
     
     func nameForStar(_ i: Int) -> String {
         if Double(i) <= rating {

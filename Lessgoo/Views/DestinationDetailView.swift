@@ -66,18 +66,57 @@ struct DestinationDetailView: View {
                 }
             }
             .padding()
+//            .overlay(Rectangle().strokeBorder(.black, lineWidth: 2))
         }
         .onAppear {
-            Task {
-                dataManager.fetchTrips()
-                viewModel.trips = dataManager.trips
-            }
-            
+            viewModel.dataManager = dataManager
+            //UserID
             viewModel.userId = dataManager.currentUserEmail
             
-            let ref = dataManager.db.collection("Review").whereField("destinationId", isEqualTo: viewModel.destination.id)
+            //Favorite
+            let favoriteRef = dataManager.db.collection("Users").document(viewModel.userId)
+            favoriteRef.getDocument { snapshot, error in
+                guard let snapshot,
+                      error == nil
+                else {
+                    print("---Get Favorite for Destination Error---")
+                    print(error?.localizedDescription ?? "no snapshot")
+                    return
+                }
+//                print("updating favorite")
+                let map = snapshot.data()?["favorites"] as? [String: Bool]
+//                print(map)
+                viewModel.favorited = map?[viewModel.destination.id] ?? false
+            }
             
-            ref.addSnapshotListener { snapshot, error in
+            //Trips
+            let tripsRef = dataManager.db.collection("Trip").whereField("collaborators", arrayContains: viewModel.userId)
+            tripsRef.addSnapshotListener { snapshot, error in
+                guard let snapshot,
+                      error == nil
+                else {
+                    print("---Get Trips for Destination Error---")
+                    print(error?.localizedDescription ?? "no snapshot")
+                    return
+                }
+//                print("updating trips")
+                viewModel.trips = snapshot.documents.map {
+                    let data = $0.data()
+                    return Trip(
+                        id: $0.documentID,
+                        collaborators: data["collaborators"] as? [String] ?? [],
+                        description: data["description"] as? String ?? "",
+                        destinations: data["destinations"] as? [String] ?? [],
+                        duration: data["duration"] as? String ?? "",
+                        privacy: data["privacy"] as? String ?? "",
+                        title: data["title"] as? String ?? ""
+                    )
+                }
+            }
+            
+            //Reviews
+            let reviewsRef = dataManager.db.collection("Review").whereField("destinationId", isEqualTo: viewModel.destination.id)
+            reviewsRef.addSnapshotListener { snapshot, error in
                 guard let snapshot,
                       error == nil
                 else {
@@ -85,7 +124,7 @@ struct DestinationDetailView: View {
                     print(error?.localizedDescription ?? "no snapshot")
                     return
                 }
-                
+//                print("updating reviews")
                 viewModel.reviews = snapshot.documents.map {
                     let data = $0.data()
                     return Review(id: $0.documentID,
@@ -103,12 +142,14 @@ struct DestinationDetailView: View {
 }
 
 struct FavoritesView: View {
+    @EnvironmentObject var dataManager: DataManager
     @ObservedObject var viewModel: DestinationViewViewModel
     
     var body: some View {
         HStack {
             Button {
                 viewModel.favorited.toggle()
+                dataManager.updateUserFavorite(destinationId: viewModel.destination.id, isFavorite: viewModel.favorited)
             } label: {
                 Image(systemName: viewModel.favorited ? "heart.fill": "heart")
                     .resizable()

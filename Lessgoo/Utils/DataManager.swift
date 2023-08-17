@@ -74,6 +74,13 @@ class DataManager: ObservableObject {
         }
     }
     
+    func updateUserFavorite(destinationId: String, isFavorite: Bool) {
+        let ref = db.collection("Users").document(currentUserEmail)
+        ref.updateData ([
+            "favorites.\(destinationId)": isFavorite
+        ])
+    }
+    
     func addUserWithProfile(email: String, name: String, location: String, password: String) {
         let profileRef = db.collection("Profile").document()
         profileRef.setData([
@@ -245,6 +252,17 @@ class DataManager: ObservableObject {
                 print("Error updating document: \(error)")
             } else {
                 print("Document successfully updated")
+            }
+        }
+    }
+    
+    func addDestinationToTrip(tripId: String, destinationId: String) {
+        let ref = db.collection("Trip").document(tripId)
+        ref.updateData([
+            "destinations": FieldValue.arrayUnion([destinationId])
+        ]) { error in
+            if let error {
+                print("Add to Trip: \(error)")
             }
         }
     }

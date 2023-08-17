@@ -13,12 +13,24 @@ struct TripListCellView: View {
     @EnvironmentObject var dataManager: DataManager
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            tripImage
-                .resizable()
-                .scaledToFill()
-                .frame(width: 120, height: 120) // Adjust to your needs
-                .clipped()
-            
+            if let photoURL = trip?.photoURL, let url = URL(string: photoURL) {
+                AsyncImage(url: url, content: {
+                    image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 120, height: 120) // Adjust to your needs
+                        .clipped()
+                }, placeholder: {
+                    ProgressView()
+                })
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 120) // Adjust to your needs
+                    .clipped()
+            }
             Text(trip?.title ?? "Default Trip")
                 .font(.headline)
                 .foregroundColor(.primary)

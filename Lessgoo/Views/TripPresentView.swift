@@ -10,9 +10,12 @@ import SwiftUI
 struct TripPresentView: View {
     @State var tripNameSub: String = ""
     @State private var showingSheet = false
-    var tripImage: Image = Image(systemName: "photo") // Using system icon as placeholder
-    
     @State var trip: Trip
+    var photoURL: String?
+    
+    @State private var isImagePickerDisplayed: Bool = false
+    @State private var selectedImage: UIImage?
+    
     @EnvironmentObject var dataManager: DataManager
     @Environment(\.presentationMode) var presentationMode
         
@@ -22,11 +25,39 @@ struct TripPresentView: View {
         ZStack {
             ScrollView{
                 VStack(alignment: .leading, spacing: 5) {
-                    tripImage
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: UIScreen.main.bounds.width, height: 180)
-                        .clipped()
+                    if let image = selectedImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: UIScreen.main.bounds.width, height: 180)
+                            .clipped()
+                            .onTapGesture {
+                                isImagePickerDisplayed.toggle()
+                            }
+                    } else if let photoURL, let url = URL(string: photoURL) {
+                        AsyncImage(url: url, content: {
+                            image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: UIScreen.main.bounds.width, height: 180)
+                                .clipped()
+                                .onTapGesture {
+                                    isImagePickerDisplayed.toggle()
+                                }
+                        }, placeholder: {
+                            ProgressView()
+                        })
+                    } else {
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: UIScreen.main.bounds.width, height: 180)
+                            .clipped()
+                            .onTapGesture {
+                                isImagePickerDisplayed.toggle()
+                            }
+                    }
                     
                     Spacer()
                     
@@ -97,6 +128,28 @@ struct TripPresentView: View {
                     }
                 }
             )
+            .sheet(isPresented: $isImagePickerDisplayed, onDismiss: {
+                if let image = selectedImage {
+                    dataManager.uploadTripPicture(trip: trip, image) { result in
+                        switch result {
+                        case .success(let photoURL):
+                            print("Uploaded profile picture. URL: \(photoURL)")
+                            
+                            dataManager.updateTripPhotoURL( tripId: trip.id, photoURL: photoURL) { error in
+                                print(error?.localizedDescription)
+                            }
+                            trip.photoURL = photoURL
+
+                        case .failure(let error):
+                            print("Error uploading profile picture: \(error.localizedDescription)")
+                            // Handle the error (e.g., show an alert)
+                        }
+                    }
+                }
+                dataManager.fetchTrips()
+            }, content: {
+                ImagePicker(selectedImage: $selectedImage, isImagePickerDisplayed: $isImagePickerDisplayed)
+            })
             .onAppear {
                 dataManager.fetchCurrentTripDestinations(trip: trip)
                 self.tripNameSub = getSubTitle()

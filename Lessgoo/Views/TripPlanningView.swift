@@ -23,7 +23,11 @@ struct TripPlanningView: View {
                 
                 List {
                     ForEach(dataManager.trips, id: \.id) { trip in
-                        NavigationLink(destination: TripPresentView(trip: trip).environmentObject(dataManager)) {
+                        NavigationLink(destination: TripPresentView(trip: trip, photoURL: trip.photoURL).environmentObject(dataManager)
+                            .onDisappear {
+                                dataManager.fetchTrips()
+                            }
+                        ) {
                             TripListCellView(trip: trip).environmentObject(dataManager)
                         }
                     }

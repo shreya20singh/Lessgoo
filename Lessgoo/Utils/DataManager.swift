@@ -237,7 +237,8 @@ class DataManager: ObservableObject {
                         destinations: data["destinations"] as? [String] ?? [],
                         duration: data["duration"] as? String ?? "",
                         privacy: data["privacy"] as? String ?? "",
-                        title: data["title"] as? String ?? ""
+                        title: data["title"] as? String ?? "",
+                        photoURL: data["photoURL"] as? String
                     )
                 }
                 self.trips = trips
@@ -279,6 +280,20 @@ class DataManager: ObservableObject {
             "destinations": destinations,
             "duration": duration,
             "privacy": privacy
+        ]) { error in
+            completion(error)
+            if let error = error {
+                print("Error updating document: \(error)")
+            } else {
+                print("Document successfully updated")
+            }
+        }
+    }
+    
+    func updateTripPhotoURL(tripId: String, photoURL: String, completion: @escaping (Error?) -> Void) {
+        let ref = db.collection("Trip").document(tripId)
+        ref.updateData([
+            "photoURL": photoURL
         ]) { error in
             completion(error)
             if let error = error {
@@ -770,6 +785,40 @@ class DataManager: ObservableObject {
                 }
             }
         }
+    
+        func uploadTripPicture(trip: Trip, _ image: UIImage, completion: @escaping (Result<String, Error>) -> Void) {
+                guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {
+                    completion(.failure(NSError(domain: "Failed to convert image to data", code: 0, userInfo: nil)))
+                    return
+                }
+                
+                let storageRef = Storage.storage().reference()
+            let profilePictureRef = storageRef.child("tripPictures/\(trip.id)/\(currentUserEmail).jpg")
+                
+                let metadata = StorageMetadata()
+                metadata.contentType = "image/jpeg"
+                
+                profilePictureRef.putData(data, metadata: metadata) { (metadata, error) in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
+                    
+                    profilePictureRef.downloadURL { (url, error) in
+                        if let error = error {
+                            completion(.failure(error))
+                            return
+                        }
+                        
+                        guard let url = url else {
+                            completion(.failure(NSError(domain: "Failed to retrieve download URL", code: 0, userInfo: nil)))
+                            return
+                        }
+                        
+                        completion(.success(url.absoluteString))
+                    }
+                }
+            }
         
         func uploadProfilePictureAsync(_ image: UIImage) async throws -> String {
             guard currentUserEmail.count > 0, let data = image.jpegData(compressionQuality: 0.8) else {

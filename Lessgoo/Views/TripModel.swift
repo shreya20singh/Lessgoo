@@ -16,4 +16,5 @@ struct Trip: Identifiable {
     var duration: String
     var privacy: String
     var title: String
+    var photoURL: String?
 }

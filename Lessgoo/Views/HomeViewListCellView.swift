@@ -26,11 +26,18 @@ struct HomeViewListCellView: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            Image(destination?.image ??  "photo")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 100, height: 100) // Adjust to your needs
-                .clipped()
+            ZStack {
+                Image("Ronda")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100) // Adjust to your needs
+                    .clipped()
+                Image(destination?.image ?? "")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100) // Adjust to your needs
+                    .clipped()
+            }
             
             VStack(alignment: .leading, spacing: 5) {
                 Text(destination?.destinationName ?? "Default Name")

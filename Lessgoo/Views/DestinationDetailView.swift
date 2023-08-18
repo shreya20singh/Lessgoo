@@ -25,12 +25,21 @@ struct DestinationDetailView: View {
                 Text(viewModel.destination.location)
                 FavoritesView(viewModel: viewModel)
 //                viewModel.destination.image
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: 250, alignment: .center)
-                    .clipped()
-                    .allowsHitTesting(false)
+                ZStack {
+                    Image("Ronda")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 250, alignment: .center)
+                        .clipped()
+                        .allowsHitTesting(false)
+                    Image(viewModel.destination.image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 250, alignment: .center)
+                        .clipped()
+                        .allowsHitTesting(false)
+                }
+                
                 Text(viewModel.destination.destinationDescription)
                 
                 if let ownReview = viewModel.ownReview {

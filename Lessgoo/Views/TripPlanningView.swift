@@ -10,7 +10,8 @@ import SwiftUI
 struct TripPlanningView: View {
     @State private var showingSheet = false
     @EnvironmentObject var dataManager: DataManager
-
+    
+    @Environment(\.scenePhase) var scenePhase
     var body: some View {
         NavigationView {
             VStack {
@@ -60,6 +61,17 @@ struct TripPlanningView: View {
                 dataManager.fetchTrips()
             }
         }
+        .onChange(of: scenePhase) { newPhase in
+            switch newPhase {
+                case .inactive:
+                    print("inactive")
+                case .active:
+                dataManager.fetchTrips()
+                case .background:
+                    print("background")
+            }
+        }
+        
     }
 }
 
